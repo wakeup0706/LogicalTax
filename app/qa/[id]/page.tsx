@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth';
 import { redirect, notFound } from 'next/navigation';
 import { supabaseAdmin } from '@/lib/supabase';
 import { stripe } from '@/lib/stripe';
+import Stripe from 'stripe';
 import Link from 'next/link';
 
 // Force dynamic rendering
@@ -35,8 +36,9 @@ export default async function QADetailPage({ params }: { params: Promise<{ id: s
     if (!isAccessGranted) {
         try {
             const stripeSub = await stripe.subscriptions.retrieve(sub.id) as Stripe.Subscription;
+            const currentPeriodEnd = stripeSub.items.data[0]?.current_period_end;
             if (stripeSub.status === 'active' || stripeSub.status === 'trialing' ||
-                (stripeSub.status === 'canceled' && new Date(stripeSub.current_period_end * 1000) > new Date())) {
+                (stripeSub.status === 'canceled' && currentPeriodEnd && new Date(currentPeriodEnd * 1000) > new Date())) {
                 isAccessGranted = true;
             }
         } catch (e) { }
