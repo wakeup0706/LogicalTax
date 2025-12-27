@@ -22,25 +22,24 @@ export async function POST(req: NextRequest) {
         return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
     }
 
-    const session = event.data.object as Stripe.Checkout.Session;
-    const subscription = event.data.object as Stripe.Subscription;
-
     try {
         if (event.type === 'checkout.session.completed') {
+            const session = event.data.object as Stripe.Checkout.Session;
             const subscriptionId = session.subscription as string;
-            const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+            const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription;
 
             // We assume userId is passed in metadata during checkout creation
             const userId = session.metadata?.userId;
 
             if (userId) {
+                const currentPeriodEnd = stripeSubscription.items.data[0].current_period_end;
                 await supabaseAdmin.from('subscriptions').upsert({
                     id: subscriptionId,
                     user_id: userId,
                     status: stripeSubscription.status,
                     price_id: stripeSubscription.items.data[0].price.id,
                     cancel_at_period_end: stripeSubscription.cancel_at_period_end,
-                    current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+                    current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
                 });
 
                 // Update customer ID in users table
@@ -51,6 +50,8 @@ export async function POST(req: NextRequest) {
                 }
             }
         } else if (event.type === 'customer.subscription.updated') {
+            const subscription = event.data.object as Stripe.Subscription;
+            const currentPeriodEnd = subscription.items.data[0].current_period_end;
             // For updates, we just update the specific fields. 
             // Upsert might fail if we don't assume user_id is present in this event object's metadata.
             // So we use update() which only changes provided fields for the existing ID.
@@ -58,14 +59,16 @@ export async function POST(req: NextRequest) {
                 status: subscription.status,
                 price_id: subscription.items.data[0].price.id,
                 cancel_at_period_end: subscription.cancel_at_period_end,
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
             }).eq('id', subscription.id);
 
         } else if (event.type === 'customer.subscription.deleted') {
+            const subscription = event.data.object as Stripe.Subscription;
+            const currentPeriodEnd = subscription.items.data[0].current_period_end;
             await supabaseAdmin.from('subscriptions').update({
                 status: subscription.status,
                 cancel_at_period_end: subscription.cancel_at_period_end,
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
             }).eq('id', subscription.id);
         }
     } catch (err: any) {
