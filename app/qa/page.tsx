@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { stripe } from '@/lib/stripe';
 import Link from 'next/link';
 import UserNav from '@/components/UserNav';
+import { Category } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,7 +81,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
     const { data: categories } = await supabaseAdmin
         .from('categories')
         .select('*')
-        .order('sort_order');
+        .order('sort_order') as { data: Category[] | null };
 
     // Fetch Q&A
     let qaQuery = supabaseAdmin
