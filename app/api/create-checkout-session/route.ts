@@ -10,12 +10,16 @@ export async function POST(req: Request) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    if (!process.env.STRIPE_PRICE_ID) {
+        return new NextResponse("Missing STRIPE_PRICE_ID", { status: 500 });
+    }
+
     const checkoutSession = await stripe.checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [
             {
-                price: process.env.STRIPE_PRICE_ID!,
+                price: process.env.STRIPE_PRICE_ID,
                 quantity: 1,
             },
         ],

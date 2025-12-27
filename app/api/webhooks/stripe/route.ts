@@ -12,10 +12,15 @@ export async function POST(req: NextRequest) {
     let event: Stripe.Event;
 
     try {
+        if (!process.env.STRIPE_WEBHOOK_SECRET) {
+            console.warn('STRIPE_WEBHOOK_SECRET is missing. Skipping webhook signature verification.');
+            return new NextResponse('Webhook ignored (missing secret)', { status: 200 });
+        }
+
         event = stripe.webhooks.constructEvent(
             body,
             signature,
-            process.env.STRIPE_WEBHOOK_SECRET!
+            process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (error: any) {
         console.error(`Webhook Error: ${error.message}`);
