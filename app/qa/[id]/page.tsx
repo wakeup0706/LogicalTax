@@ -34,7 +34,7 @@ export default async function QADetailPage({ params }: { params: Promise<{ id: s
     // Double check stripe if needed
     if (!isAccessGranted) {
         try {
-            const stripeSub = await stripe.subscriptions.retrieve(sub.id);
+            const stripeSub = await stripe.subscriptions.retrieve(sub.id) as Stripe.Subscription;
             if (stripeSub.status === 'active' || stripeSub.status === 'trialing' ||
                 (stripeSub.status === 'canceled' && new Date(stripeSub.current_period_end * 1000) > new Date())) {
                 isAccessGranted = true;
