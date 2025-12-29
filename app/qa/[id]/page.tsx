@@ -16,35 +16,40 @@ export default async function QADetailPage({ params }: { params: Promise<{ id: s
         redirect('/login');
     }
 
-    // 1. Subscription Check (Reused logic - in real app, Middleware or HOC is better)
-    const { data: sub } = await supabaseAdmin
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
+    // TODO: Set to false when Stripe is configured with STRIPE_WEBHOOK_SECRET and STRIPE_PRICE_ID
+    const BYPASS_SUBSCRIPTION_CHECK = true;
 
-    if (!sub) redirect('/checkout');
+    // 1. Subscription Check (skip if bypass is enabled)
+    if (!BYPASS_SUBSCRIPTION_CHECK) {
+        const { data: sub } = await supabaseAdmin
+            .from('subscriptions')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
 
-    let isAccessGranted = false;
-    if (sub.status === 'active' || sub.status === 'trialing') {
-        isAccessGranted = true;
-    } else if (sub.status === 'canceled' && new Date(sub.current_period_end || 0) > new Date()) {
-        isAccessGranted = true;
+        if (!sub) redirect('/checkout');
+
+        let isAccessGranted = false;
+        if (sub.status === 'active' || sub.status === 'trialing') {
+            isAccessGranted = true;
+        } else if (sub.status === 'canceled' && new Date(sub.current_period_end || 0) > new Date()) {
+            isAccessGranted = true;
+        }
+
+        // Double check stripe if needed
+        if (!isAccessGranted) {
+            try {
+                const stripeSub = await stripe.subscriptions.retrieve(sub.id) as Stripe.Subscription;
+                const currentPeriodEnd = stripeSub.items.data[0]?.current_period_end;
+                if (stripeSub.status === 'active' || stripeSub.status === 'trialing' ||
+                    (stripeSub.status === 'canceled' && currentPeriodEnd && new Date(currentPeriodEnd * 1000) > new Date())) {
+                    isAccessGranted = true;
+                }
+            } catch (e) { }
+        }
+
+        if (!isAccessGranted) redirect('/checkout');
     }
-
-    // Double check stripe if needed
-    if (!isAccessGranted) {
-        try {
-            const stripeSub = await stripe.subscriptions.retrieve(sub.id) as Stripe.Subscription;
-            const currentPeriodEnd = stripeSub.items.data[0]?.current_period_end;
-            if (stripeSub.status === 'active' || stripeSub.status === 'trialing' ||
-                (stripeSub.status === 'canceled' && currentPeriodEnd && new Date(currentPeriodEnd * 1000) > new Date())) {
-                isAccessGranted = true;
-            }
-        } catch (e) { }
-    }
-
-    if (!isAccessGranted) redirect('/checkout');
 
 
     // 2. Fetch Q&A Detail

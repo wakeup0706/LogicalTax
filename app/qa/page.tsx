@@ -17,6 +17,9 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
         redirect('/login');
     }
 
+    // TODO: Set to false when Stripe is configured with STRIPE_WEBHOOK_SECRET and STRIPE_PRICE_ID
+    const BYPASS_SUBSCRIPTION_CHECK = true;
+
     // 0. Check if Admin
     const { data: userData } = await supabaseAdmin
         .from('users')
@@ -24,7 +27,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
         .eq('id', session.user.id)
         .single();
 
-    if (!userData?.is_admin) {
+    if (!userData?.is_admin && !BYPASS_SUBSCRIPTION_CHECK) {
         // 1. Subscription Check (Only for non-admins)
         const { data: sub } = await supabaseAdmin
             .from('subscriptions')
@@ -52,10 +55,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
         // Fallback: Check Stripe if DB says inactive
         if (!isAccessGranted) {
             try {
-                // Ensure we get the subscription object with expanded properties if needed
                 const stripeSub: any = await stripe.subscriptions.retrieve(sub.id);
-
-                // Stripe SDK returns 'current_period_end' as a number (Unix timestamp in seconds)
                 const stripePeriodEnd = new Date(stripeSub.current_period_end * 1000);
 
                 const isStripeActive = stripeSub.status === 'active' || stripeSub.status === 'trialing';
