@@ -11,6 +11,16 @@ export async function POST(req: Request) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    // Determine base URL safely
+    let baseUrl = process.env.NEXTAUTH_URL;
+    if (!baseUrl) {
+        const protocol = req.headers.get('x-forwarded-proto') ?? 'http';
+        const host = req.headers.get('host') ?? 'localhost:3000';
+        baseUrl = `${protocol}://${host}`;
+    } else if (!baseUrl.startsWith('http')) {
+        baseUrl = `https://${baseUrl}`;
+    }
+
     // Check if Stripe keys are configured
     const hasPriceId = !!process.env.STRIPE_PRICE_ID;
     const hasWebhookSecret = !!process.env.STRIPE_WEBHOOK_SECRET;
@@ -35,7 +45,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({
             // Return a URL to simulate the real Stripe flow
-            url: `${process.env.NEXTAUTH_URL}/dummy-payment`
+            url: `${baseUrl}/dummy-payment`
         });
     }
 
@@ -54,8 +64,8 @@ export async function POST(req: Request) {
                 userId: session.user.id,
             },
             customer_email: session.user.email || undefined,
-            success_url: `${process.env.NEXTAUTH_URL}/qa?success=true`,
-            cancel_url: `${process.env.NEXTAUTH_URL}/checkout?canceled=true`,
+            success_url: `${baseUrl}/qa?success=true`,
+            cancel_url: `${baseUrl}/checkout?canceled=true`,
         });
 
         return NextResponse.json({ url: checkoutSession.url });
