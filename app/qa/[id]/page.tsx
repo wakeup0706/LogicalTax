@@ -17,7 +17,7 @@ export default async function QADetailPage({ params }: { params: Promise<{ id: s
     }
 
     // TODO: Set to false when Stripe is configured with STRIPE_WEBHOOK_SECRET and STRIPE_PRICE_ID
-    const BYPASS_SUBSCRIPTION_CHECK = true;
+    const BYPASS_SUBSCRIPTION_CHECK = false;
 
     // 1. Subscription Check (skip if bypass is enabled)
     if (!BYPASS_SUBSCRIPTION_CHECK) {

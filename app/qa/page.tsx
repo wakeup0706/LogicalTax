@@ -18,7 +18,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
     }
 
     // TODO: Set to false when Stripe is configured with STRIPE_WEBHOOK_SECRET and STRIPE_PRICE_ID
-    const BYPASS_SUBSCRIPTION_CHECK = true;
+    const BYPASS_SUBSCRIPTION_CHECK = false;
 
     // 0. Check if Admin
     const { data: userData } = await supabaseAdmin
@@ -85,6 +85,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
 
     // Fetch Q&A
     let qaQuery = supabaseAdmin
+
         .from('qa')
         .select('id, question_title, answer_content, category_id, is_published, categories(name)')
         .eq('is_published', true)

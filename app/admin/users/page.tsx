@@ -11,6 +11,14 @@ export default function AdminUsers() {
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
 
+    // Edit Modal State
+    const [editingUser, setEditingUser] = useState<any | null>(null);
+    const [editEmail, setEditEmail] = useState('');
+    const [editFullName, setEditFullName] = useState('');
+    const [editPassword, setEditPassword] = useState('');
+    const [editIsAdmin, setEditIsAdmin] = useState(false);
+    const [editLoading, setEditLoading] = useState(false);
+
     // Fetch Users on Mount
     const fetchUsers = async () => {
         const res = await fetch('/api/admin/users');
@@ -68,6 +76,57 @@ export default function AdminUsers() {
             const data = await res.json();
             alert('削除エラー: ' + data.error);
         }
+    };
+
+    // Open Edit Modal
+    const openEditModal = (user: any) => {
+        setEditingUser(user);
+        setEditEmail(user.email || '');
+        setEditFullName(user.full_name || '');
+        setEditIsAdmin(user.is_admin || false);
+    };
+
+    // Close Edit Modal
+    const closeEditModal = () => {
+        setEditingUser(null);
+        setEditEmail('');
+        setEditFullName('');
+        setEditPassword('');
+        setEditIsAdmin(false);
+    };
+
+    // Handle Edit Submit
+    const handleEditSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingUser) return;
+
+        setEditLoading(true);
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: editingUser.id,
+                    email: editEmail,
+                    full_name: editFullName,
+                    password: editPassword || undefined,
+                    is_admin: editIsAdmin,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert('更新エラー: ' + data.error);
+            } else {
+                setMsg('ユーザー情報を更新しました。');
+                closeEditModal();
+                fetchUsers();
+            }
+        } catch (err) {
+            alert('リクエストに失敗しました');
+        }
+        setEditLoading(false);
     };
 
     return (
@@ -170,6 +229,12 @@ export default function AdminUsers() {
                                             </td>
                                             <td className="p-4 text-right">
                                                 <button
+                                                    onClick={() => openEditModal(user)}
+                                                    className="text-indigo-400 hover:text-indigo-300 text-sm font-medium hover:underline mr-4"
+                                                >
+                                                    編集
+                                                </button>
+                                                <button
                                                     onClick={() => handleDelete(user.id)}
                                                     className="text-red-400 hover:text-red-300 text-sm font-medium hover:underline"
                                                 >
@@ -184,6 +249,91 @@ export default function AdminUsers() {
                     </div>
                 </div>
             </div>
+
+            {/* Edit User Modal */}
+            {editingUser && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold text-white">ユーザー編集</h2>
+                            <button
+                                onClick={closeEditModal}
+                                className="text-slate-400 hover:text-white transition"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleEditSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-1">メールアドレス</label>
+                                <input
+                                    type="email"
+                                    value={editEmail}
+                                    onChange={(e) => setEditEmail(e.target.value)}
+                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-1">氏名</label>
+                                <input
+                                    type="text"
+                                    value={editFullName}
+                                    onChange={(e) => setEditFullName(e.target.value)}
+                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-1">新しいパスワード</label>
+                                <input
+                                    type="password"
+                                    value={editPassword}
+                                    onChange={(e) => setEditPassword(e.target.value)}
+                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    placeholder="変更する場合のみ入力"
+                                    minLength={6}
+                                />
+                                <p className="text-xs text-slate-500 mt-1">空欄の場合、パスワードは変更されません</p>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={editIsAdmin}
+                                        onChange={(e) => setEditIsAdmin(e.target.checked)}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-slate-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                                <span className="text-sm font-medium text-slate-300">管理者権限</span>
+                            </div>
+
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={closeEditModal}
+                                    className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition"
+                                >
+                                    キャンセル
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={editLoading}
+                                    className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition disabled:opacity-50"
+                                >
+                                    {editLoading ? '保存中...' : '保存'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

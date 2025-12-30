@@ -21,7 +21,19 @@ export async function GET() {
 
     if (user?.is_admin) {
         return NextResponse.json({ redirectTo: '/admin' });
-    } else {
+    }
+
+    // Check Subscription Status
+    const { data: subscription } = await supabaseAdmin
+        .from('subscriptions')
+        .select('status')
+        .eq('user_id', session.user.id)
+        .in('status', ['active', 'trialing'])
+        .maybeSingle();
+
+    if (subscription) {
         return NextResponse.json({ redirectTo: '/qa' });
+    } else {
+        return NextResponse.json({ redirectTo: '/checkout' });
     }
 }

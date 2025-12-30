@@ -1,15 +1,17 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,11 +29,14 @@ export default function LoginPage() {
                 setError('メールアドレスまたはパスワードが正しくありません');
                 setLoading(false);
             } else {
-                // Fetch the correct redirect destination based on role
-                const res = await fetch('/api/check-role');
-                const data = await res.json();
-
-                router.push(data.redirectTo || '/qa');
+                // If there's a redirect parameter, use it; otherwise check role
+                if (redirectTo) {
+                    router.push(redirectTo);
+                } else {
+                    const res = await fetch('/api/check-role');
+                    const data = await res.json();
+                    router.push(data.redirectTo || '/qa');
+                }
                 router.refresh();
             }
         } catch (err) {
@@ -54,6 +59,12 @@ export default function LoginPage() {
                         <h1 className="text-2xl font-bold text-white mb-2">ログイン</h1>
                         <p className="text-slate-400 text-sm">LogicalTaxにアクセスする</p>
                     </div>
+
+                    {redirectTo === '/checkout' && (
+                        <div className="mb-6 bg-indigo-500/10 border border-indigo-500/50 text-indigo-200 text-sm p-3 rounded-lg text-center">
+                            サブスクリプションにはログインが必要です
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && (
@@ -101,3 +112,16 @@ export default function LoginPage() {
         </div>
     );
 }
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
+    );
+}
+            

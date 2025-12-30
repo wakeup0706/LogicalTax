@@ -2,13 +2,32 @@
 
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 
 function CheckoutContent() {
     const { data: session, status } = useSession();
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
     const searchParams = useSearchParams();
     const canceled = searchParams.get('canceled');
+    const success = searchParams.get('success');
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/login?redirect=/checkout');
+        }
+    }, [status, router]);
+
+    // Handle success (from dummy payment or real Stripe)
+    useEffect(() => {
+        if (success === 'true' && session) {
+            // Show success message and redirect to /qa
+            setTimeout(() => {
+                router.push('/qa');
+            }, 2000);
+        }
+    }, [success, session, router]);
 
     const handleSubscribe = async () => {
         if (!session) {
@@ -22,7 +41,9 @@ function CheckoutContent() {
                 method: 'POST',
             });
             const data = await res.json();
+
             if (data.url) {
+                // Redirect to payment page (either real Stripe or dummy page)
                 window.location.href = data.url;
             } else {
                 alert('支払いの開始に失敗しました。もう一度お試しください。');
@@ -43,6 +64,15 @@ function CheckoutContent() {
         );
     }
 
+    // Don't render content if not authenticated (will redirect)
+    if (status === 'unauthenticated') {
+        return (
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background Gradients */}
@@ -53,6 +83,12 @@ function CheckoutContent() {
             </div>
 
             <div className="z-10 w-full max-w-md">
+                {success && (
+                    <div className="mb-6 bg-green-500/10 border border-green-500/50 text-green-200 p-4 rounded-lg backdrop-blur-sm text-center">
+                        🎉 お支払いが完了しました！Q&Aページにリダイレクトしています...
+                    </div>
+                )}
+
                 {canceled && (
                     <div className="mb-6 bg-red-500/10 border border-red-500/50 text-red-200 p-4 rounded-lg backdrop-blur-sm">
                         支払いがキャンセルされました。準備ができ次第、再度お試しください。
