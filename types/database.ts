@@ -25,6 +25,7 @@ export interface QA {
     answer_content: string;
     category_id: string | null;
     is_published: boolean;
+    is_free: boolean;
     created_at: string;
     updated_at: string;
     // Joins

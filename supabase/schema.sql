@@ -52,6 +52,7 @@ create table if not exists public.qa (
   answer_content text not null,
   category_id uuid references public.categories(id),
   is_published boolean default true,
+  is_free boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

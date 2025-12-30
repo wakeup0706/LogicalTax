@@ -15,7 +15,10 @@ export default function AdminQA() {
     const [qContent, setQContent] = useState("");
     const [aContent, setAContent] = useState("");
     const [categoryId, setCategoryId] = useState("");
+    const [isFree, setIsFree] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
@@ -52,7 +55,8 @@ export default function AdminQA() {
                 question: qContent,
                 answer: aContent,
                 category_id: categoryId,
-                is_published: true // Default to published
+                is_published: true, // Default to published
+                is_free: isFree
             }),
         });
 
@@ -65,6 +69,7 @@ export default function AdminQA() {
             setQContent("");
             setAContent("");
             setCategoryId("");
+            setIsFree(false);
             fetchData();
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
@@ -151,6 +156,20 @@ export default function AdminQA() {
                                 placeholder="専門家の回答..."
                             />
                         </div>
+
+                        <div className="flex items-center gap-2 bg-slate-900/50 p-3 rounded border border-slate-700/50">
+                            <input
+                                type="checkbox"
+                                id="isFree"
+                                checked={isFree}
+                                onChange={(e) => setIsFree(e.target.checked)}
+                                className="w-4 h-4 rounded border-slate-600 text-cyan-500 focus:ring-cyan-500 bg-slate-700"
+                            />
+                            <label htmlFor="isFree" className="text-sm text-slate-300 cursor-pointer select-none">
+                                無料公開 (Free Access)
+                            </label>
+                        </div>
+
                         <button
                             type="submit"
                             className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-medium transition"
@@ -189,7 +208,14 @@ export default function AdminQA() {
                                         </div>
                                     </div>
                                     <Link href={`/admin/qa/${qa.id}`} className="block group-hover:bg-slate-700/30 -mx-5 -mb-5 px-5 pb-5 pt-2 rounded-b-lg transition">
-                                        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition">{qa.question_title}</h3>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            {qa.is_free && (
+                                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border border-green-500/50 text-green-400 uppercase">
+                                                    FREE
+                                                </span>
+                                            )}
+                                            <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition">{qa.question_title}</h3>
+                                        </div>
                                         <p className="text-sm text-slate-400 line-clamp-2">{qa.question_content}</p>
                                     </Link>
                                 </div>
@@ -246,6 +272,30 @@ export default function AdminQA() {
                         <button
                             onClick={() => setShowSuccess(false)}
                             className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-medium transition w-full"
+                        >
+                            閉じる
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Error Modal */}
+            {showError && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-slate-800 border border-red-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-red-600"></div>
+                        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">エラーが発生しました</h3>
+                        <p className="text-slate-300 mb-6 text-sm">
+                            {errorMessage}
+                        </p>
+                        <button
+                            onClick={() => setShowError(false)}
+                            className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-full font-medium transition w-full"
                         >
                             閉じる
                         </button>

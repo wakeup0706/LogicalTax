@@ -69,14 +69,31 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { title, question, answer, category_id } = body;
+        const { title, question, answer, category_id, is_free } = body;
+
+        // Force only 5 free questions max
+        if (is_free) {
+            const { count, error: countError } = await supabaseAdmin
+                .from('qa')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_free', true);
+
+            if (countError) throw countError;
+
+            if ((count || 0) >= 5) {
+                return NextResponse.json({
+                    error: "無料公開枠の上限(5件)に達しています。既存の無料Q&Aを解除してください。"
+                }, { status: 400 });
+            }
+        }
 
         const { data, error } = await supabaseAdmin.from('qa').insert({
             question_title: title,
             question_content: question,
             answer_content: answer,
             category_id,
-            is_published: true
+            is_published: true,
+            is_free: is_free || false
         }).select().single();
 
         if (error) throw error;
@@ -107,9 +124,26 @@ export async function PUT(req: Request) {
 
     try {
         const body = await req.json();
-        const { id, title, question, answer, category_id, is_published } = body;
+        const { id, title, question, answer, category_id, is_published, is_free } = body;
 
         if (!id) throw new Error("ID required");
+
+        // Force only 5 free questions max
+        if (is_free) {
+            const { count, error: countError } = await supabaseAdmin
+                .from('qa')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_free', true)
+                .neq('id', id); // Exclude self
+
+            if (countError) throw countError;
+
+            if ((count || 0) >= 5) {
+                return NextResponse.json({
+                    error: "無料公開枠の上限(5件)に達しています。既存の無料Q&Aを解除してください。"
+                }, { status: 400 });
+            }
+        }
 
         const { data, error } = await supabaseAdmin.from('qa')
             .update({
@@ -117,7 +151,8 @@ export async function PUT(req: Request) {
                 question_content: question,
                 answer_content: answer,
                 category_id,
-                is_published
+                is_published,
+                is_free
             })
             .eq('id', id)
             .select()

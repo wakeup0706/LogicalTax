@@ -22,7 +22,10 @@ export default function QaDetail() {
     const [aContent, setAContent] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [isPublished, setIsPublished] = useState(true);
+    const [isFree, setIsFree] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,9 +44,11 @@ export default function QaDetail() {
                 setAContent(qa.answer_content);
                 setCategoryId(qa.category_id || "");
                 setIsPublished(qa.is_published);
+                setIsFree(qa.is_free || false);
             } else if (data.error || !qa) {
-                alert("Q&Aが見つかりません");
-                router.push("/admin/qa");
+                setErrorMessage("Q&Aが見つかりません");
+                setShowError(true);
+                setTimeout(() => router.push("/admin/qa"), 2000);
             }
             setLoading(false);
         };
@@ -62,13 +67,15 @@ export default function QaDetail() {
                 question: qContent,
                 answer: aContent,
                 category_id: categoryId,
-                is_published: isPublished
+                is_published: isPublished,
+                is_free: isFree
             }),
         });
 
         const data = await res.json();
         if (data.error) {
-            alert("エラー: " + data.error);
+            setErrorMessage(data.error);
+            setShowError(true);
         } else {
             setShowSuccess(true);
             setTimeout(() => {
@@ -86,7 +93,8 @@ export default function QaDetail() {
         const data = await res.json();
 
         if (data.error) {
-            alert("エラー: " + data.error);
+            setErrorMessage(data.error);
+            setShowError(true);
         } else {
             router.push("/admin/qa");
         }
@@ -164,6 +172,19 @@ export default function QaDetail() {
                         </label>
                     </div>
 
+                    <div className="flex items-center gap-3 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <input
+                            type="checkbox"
+                            id="isFree"
+                            checked={isFree}
+                            onChange={(e) => setIsFree(e.target.checked)}
+                            className="w-5 h-5 rounded border-slate-600 text-cyan-500 focus:ring-cyan-500 bg-slate-700"
+                        />
+                        <label htmlFor="isFree" className="text-white font-medium cursor-pointer">
+                            無料公開 (Free Access)
+                        </label>
+                    </div>
+
                     <div className="flex items-center justify-between pt-6 border-t border-slate-700">
                         <button
                             type="button"
@@ -180,29 +201,55 @@ export default function QaDetail() {
                         </button>
                     </div>
                 </form>
-            </div>
+            </div >
 
             {/* Success Modal */}
-            {showSuccess && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-slate-800 border border-cyan-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
-                        <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-400">
-                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+            {
+                showSuccess && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                        <div className="bg-slate-800 border border-cyan-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                            <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-400">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-2">更新完了！</h3>
+                            <p className="text-slate-300 mb-6">
+                                Q&Aの内容が正常に更新されました。
+                            </p>
+                            <button
+                                onClick={() => setShowSuccess(false)}
+                                className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-medium transition w-full"
+                            >
+                                閉じる
+                            </button>
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-2">更新完了！</h3>
-                        <p className="text-slate-300 mb-6">
-                            Q&Aの内容が正常に更新されました。
+                    </div>
+                )
+            }
+
+            {/* Error Modal */}
+            {showError && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-slate-800 border border-red-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-red-600"></div>
+                        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">エラーが発生しました</h3>
+                        <p className="text-slate-300 mb-6 text-sm">
+                            {errorMessage}
                         </p>
                         <button
-                            onClick={() => setShowSuccess(false)}
-                            className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-medium transition w-full"
+                            onClick={() => setShowError(false)}
+                            className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-full font-medium transition w-full"
                         >
                             閉じる
                         </button>
                     </div>
                 </div>
             )}
-        </div>
+        </div >
     );
 }
