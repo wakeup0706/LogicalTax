@@ -41,9 +41,15 @@ function CheckoutContent() {
                 method: 'POST',
             });
             const data = await res.json();
-
-            if (data.url) {
-                // Redirect to payment page (either real Stripe or dummy page)
+            
+            // Check if we're in dummy mode
+            if (data.dummyMode) {
+                // Simulate payment success immediately
+                setTimeout(() => {
+                    router.push('/checkout?success=true');
+                }, 1000);
+            } else if (data.url) {
+                // Real Stripe checkout
                 window.location.href = data.url;
             } else {
                 alert('支払いの開始に失敗しました。もう一度お試しください。');

@@ -4,14 +4,11 @@ import { supabaseAdmin } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default async function HomePage() {
-  // Fetch featured 'Free to View' Q&A items, or fall back to just latest if none special
-  // Per requirement: "First, the first screen should display about 5 Q&As pointed out by the administrator."
-  // which maps to is_free = true
+  // Fetch first 5 Q&A items for preview
   const { data: qaList } = await supabaseAdmin
     .from('qa')
-    .select('id, question_title, answer_content, categories(name), is_free')
+    .select('id, question_title, answer_content, categories(name)')
     .eq('is_published', true)
-    .eq('is_free', true)
     .order('created_at', { ascending: false })
     .limit(5);
 
@@ -37,7 +34,12 @@ export default async function HomePage() {
             >
               ログイン
             </Link>
-
+            <Link
+              href="/register"
+              className="text-sm font-medium px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+            >
+              新規登録
+            </Link>
           </div>
         </div>
       </header>
@@ -62,10 +64,16 @@ export default async function HomePage() {
 
           <div className="flex justify-center items-center gap-4">
             <Link
-              href="/login"
+              href="/register"
               className="px-8 py-4 rounded-full bg-white text-zinc-950 text-lg font-medium hover:bg-zinc-200 transition-colors shadow-xl shadow-white/5"
             >
               今すぐ登録する
+            </Link>
+            <Link
+              href="/login"
+              className="px-8 py-4 rounded-full border border-zinc-700 text-zinc-300 text-lg font-medium hover:border-zinc-500 hover:text-white transition-colors"
+            >
+              ログイン
             </Link>
           </div>
         </div>
@@ -73,7 +81,7 @@ export default async function HomePage() {
         {/* Preview Q&A Section */}
         <div className="max-w-3xl mx-auto px-4">
           <div className="flex justify-between items-end mb-12 border-b border-zinc-800 pb-4">
-            <h3 className="text-2xl font-semibold tracking-tight">注目の質問 (無料公開中)</h3>
+            <h3 className="text-2xl font-semibold tracking-tight">最新の質問</h3>
             <Link
               href="/login"
               className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 group"
@@ -95,11 +103,6 @@ export default async function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/50">
                     {item.categories?.name}
                   </span>
-                  {item.is_free && (
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-900/30 text-emerald-400 border border-emerald-500/30">
-                      FREE
-                    </span>
-                  )}
                 </div>
 
                 <h4 className="text-lg font-semibold text-white mb-3 group-hover:text-indigo-400 transition-colors">
