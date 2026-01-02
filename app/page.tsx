@@ -34,12 +34,14 @@ export default async function HomePage() {
             >
               ログイン
             </Link>
-            <Link
-              href="/register"
-              className="text-sm font-medium px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
-            >
-              新規登録
-            </Link>
+            {process.env.NEXT_PUBLIC_ENABLE_REGISTRATION !== 'false' && (
+              <Link
+                href="/register"
+                className="text-sm font-medium px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              >
+                新規登録
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -63,12 +65,14 @@ export default async function HomePage() {
           </p>
 
           <div className="flex justify-center items-center gap-4">
-            <Link
-              href="/register"
-              className="px-8 py-4 rounded-full bg-white text-zinc-950 text-lg font-medium hover:bg-zinc-200 transition-colors shadow-xl shadow-white/5"
-            >
-              今すぐ登録する
-            </Link>
+            {process.env.NEXT_PUBLIC_ENABLE_REGISTRATION !== 'false' && (
+              <Link
+                href="/register"
+                className="px-8 py-4 rounded-full bg-white text-zinc-950 text-lg font-medium hover:bg-zinc-200 transition-colors shadow-xl shadow-white/5"
+              >
+                今すぐ登録する
+              </Link>
+            )}
             <Link
               href="/login"
               className="px-8 py-4 rounded-full border border-zinc-700 text-zinc-300 text-lg font-medium hover:border-zinc-500 hover:text-white transition-colors"
