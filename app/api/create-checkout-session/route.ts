@@ -21,50 +21,33 @@ export async function POST(req: Request) {
         baseUrl = `https://${baseUrl}`;
     }
 
-    // Check if Stripe keys are configured
-    const hasPriceId = !!process.env.STRIPE_PRICE_ID;
-    const hasWebhookSecret = !!process.env.STRIPE_WEBHOOK_SECRET;
-
-    // DUMMY MODE: If Stripe is not fully configured, simulate successful payment
-    if (!hasPriceId || !hasWebhookSecret) {
-        console.log('🧪 DUMMY MODE: Simulating payment success for user:', session.user.id);
-
-        // Create a dummy subscription in the database
-        const dummySubId = `sub_dummy_${Date.now()}`;
-        const currentPeriodEnd = new Date();
-        currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1); // 1 month from now
-
-        await supabaseAdmin.from('subscriptions').upsert({
-            id: dummySubId,
-            user_id: session.user.id,
-            status: 'active',
-            price_id: 'price_dummy',
-            cancel_at_period_end: false,
-            current_period_end: currentPeriodEnd.toISOString(),
-        });
-
-        return NextResponse.json({
-            // Return a URL to simulate the real Stripe flow
-            url: `${baseUrl}/dummy-payment`
-        });
-    }
-
-    // REAL STRIPE MODE
+    // REAL STRIPE CHECKOUT
     try {
+        // Use STRIPE_PRICE_ID if available, otherwise use inline price_data
+        const lineItems = process.env.STRIPE_PRICE_ID
+            ? [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }]
+            : [{
+                price_data: {
+                    currency: 'jpy',
+                    product_data: {
+                        name: 'LogicalTax Pro',
+                        description: '税務判断をサポートする月額サブスクリプション',
+                    },
+                    unit_amount: 10000, // ¥10,000
+                    recurring: { interval: 'month' as const },
+                },
+                quantity: 1,
+            }];
+
         const checkoutSession = await stripe.checkout.sessions.create({
             mode: 'subscription',
             payment_method_types: ['card'],
-            line_items: [
-                {
-                    price: process.env.STRIPE_PRICE_ID,
-                    quantity: 1,
-                },
-            ],
+            line_items: lineItems,
             metadata: {
                 userId: session.user.id,
             },
             customer_email: session.user.email || undefined,
-            success_url: `${baseUrl}/qa?success=true`,
+            success_url: `${baseUrl}/checkout?success=true`,
             cancel_url: `${baseUrl}/checkout?canceled=true`,
         });
 

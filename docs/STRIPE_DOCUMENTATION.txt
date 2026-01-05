@@ -1,0 +1,86 @@
+# Stripe Billing Implementation Documentation
+
+## 1. User Flow: Initiating Payment
+
+| Item | Value |
+|------|-------|
+| **Screen Name** | `/checkout` (Checkout Page) |
+| **Button Label** | `今すぐ登録する` ("Register Now") |
+| **Trigger URL** | `POST /api/create-checkout-session` |
+
+**Flow Diagram:**
+```mermaid
+sequenceDiagram
+    participant User
+    participant CheckoutPage as /checkout
+    participant API as /api/create-checkout-session
+    participant Stripe as Stripe Checkout
+    participant Webhook as /api/webhooks/stripe
+    participant DB as Supabase DB
+
+    User->>CheckoutPage: Clicks "今すぐ登録する"
+    CheckoutPage->>API: POST /api/create-checkout-session
+    API->>Stripe: Create Checkout Session
+    Stripe-->>API: Return checkout URL
+    API-->>CheckoutPage: { url: "..." }
+    CheckoutPage->>Stripe: Redirect user
+    User->>Stripe: Completes Payment
+    Stripe->>Webhook: POST checkout.session.completed
+    Webhook->>DB: Upsert subscription record
+    Stripe-->>User: Redirect to /qa?success=true
+```
+
+**How does a non-paying user get here?**
+- Any attempt to access Q&A detail pages (`/qa/[id]`) without an active subscription redirects to `/checkout`.
+- Direct navigation to `/checkout` URL.
+
+---
+
+## 2. Test Mode Verification Procedure
+
+**Prerequisites:**
+- Ensure `STRIPE_SECRET_KEY` is a **test** key (starts with `sk_test_...`).
+- Ensure `STRIPE_PRICE_ID` is set to a test price created in Stripe Dashboard.
+- Ensure `STRIPE_WEBHOOK_SECRET` is set (from Step 3).
+
+**Step-by-Step:**
+
+1.  **Access Checkout Page:** Navigate to `/checkout` while logged in.
+2.  **Initiate Payment:** Click the `今すぐ登録する` button.
+3.  **On Stripe Checkout Page:**
+    - **Email:** Use any valid email (e.g., `test@example.com`).
+    - **Card Number:** `4242 4242 4242 4242` (Visa Test Card)
+    - **Expiry:** Any future date (e.g., `12/34`)
+    - **CVC:** Any 3 digits (e.g., `123`)
+    - **Name/ZIP:** Any value.
+4.  **Submit Payment.**
+5.  **Verify Success:**
+    - User is redirected to `/qa?success=true`.
+    - In Supabase, the `subscriptions` table should have a new record with:
+        - `user_id`: The logged-in user's ID.
+        - `status`: `active`.
+        - `price_id`: The test price ID.
+
+---
+
+## 3. Webhook Configuration
+
+| Item | Value |
+|------|-------|
+| **Endpoint URL** | `https://<your-vercel-domain>/api/webhooks/stripe` |
+| **Example (Vercel)** | `https://logicaltaxai.vercel.app/api/webhooks/stripe` |
+
+**Required Stripe Events to Enable:**
+
+| Event Name | Purpose |
+|------------|---------|
+| `checkout.session.completed` | Creates subscription record after successful payment. |
+| `customer.subscription.updated` | Updates status when subscription changes (e.g., renewal, card update). |
+| `customer.subscription.deleted` | Handles cancellations and expirations. |
+
+**Stripe Dashboard Setup:**
+1.  Go to Stripe Dashboard > Developers > Webhooks (https://dashboard.stripe.com/webhooks).
+2.  Click "Add endpoint".
+3.  Enter the Endpoint URL from above.
+4.  Select the 3 events listed.
+5.  Copy the "Signing secret" (`whsec_...`) and set it as `STRIPE_WEBHOOK_SECRET` in your Vercel environment variables.

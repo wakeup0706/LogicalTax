@@ -19,14 +19,23 @@ function CheckoutContent() {
         }
     }, [status, router]);
 
-    // Handle success (from dummy payment or real Stripe)
+    // Handle success (from Stripe Checkout)
     useEffect(() => {
-        if (success === 'true' && session) {
-            // Show success message and redirect to /qa
-            setTimeout(() => {
-                router.push('/qa');
-            }, 2000);
-        }
+        const confirmPayment = async () => {
+            if (success === 'true' && session) {
+                try {
+                    // Save subscription to database
+                    await fetch('/api/confirm-payment', { method: 'POST' });
+                } catch (e) {
+                    console.error('Error confirming payment:', e);
+                }
+                // Redirect to Q&A page
+                setTimeout(() => {
+                    router.push('/qa');
+                }, 2000);
+            }
+        };
+        confirmPayment();
     }, [success, session, router]);
 
     const handleSubscribe = async () => {
@@ -41,16 +50,13 @@ function CheckoutContent() {
                 method: 'POST',
             });
             const data = await res.json();
-            
-            // Check if we're in dummy mode
-            if (data.dummyMode) {
-                // Simulate payment success immediately
-                setTimeout(() => {
-                    router.push('/checkout?success=true');
-                }, 1000);
-            } else if (data.url) {
-                // Real Stripe checkout
+
+            if (data.url) {
+                // Redirect to Stripe Checkout
                 window.location.href = data.url;
+            } else if (data.error) {
+                alert('エラー: ' + data.error);
+                setLoading(false);
             } else {
                 alert('支払いの開始に失敗しました。もう一度お試しください。');
                 setLoading(false);
