@@ -23,6 +23,7 @@ export default function QaDetail() {
     const [categoryId, setCategoryId] = useState("");
     const [isPublished, setIsPublished] = useState(true);
     const [isFree, setIsFree] = useState(false);
+    const [sortOrder, setSortOrder] = useState(0);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -45,6 +46,7 @@ export default function QaDetail() {
                 setCategoryId(qa.category_id || "");
                 setIsPublished(qa.is_published);
                 setIsFree(qa.is_free || false);
+                setSortOrder(qa.sort_order || 0);
             } else if (data.error || !qa) {
                 setErrorMessage("Q&Aが見つかりません");
                 setShowError(true);
@@ -68,7 +70,8 @@ export default function QaDetail() {
                 answer: aContent,
                 category_id: categoryId,
                 is_published: isPublished,
-                is_free: isFree
+                is_free: isFree,
+                sort_order: sortOrder
             }),
         });
 
@@ -172,6 +175,18 @@ export default function QaDetail() {
                         </label>
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">表示順序</label>
+                        <input
+                            type="number"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
+                            className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-cyan-500 outline-none"
+                            min="0"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">数値が小さいほど上位に表示されます</p>
+                    </div>
+
                     <div className="flex items-center gap-3 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
                         <input
                             type="checkbox"
@@ -181,7 +196,7 @@ export default function QaDetail() {
                             className="w-5 h-5 rounded border-slate-600 text-cyan-500 focus:ring-cyan-500 bg-slate-700"
                         />
                         <label htmlFor="isFree" className="text-white font-medium cursor-pointer">
-                            無料公開 (Free Access)
+                            🆓 無料公開 (Free Access)
                         </label>
                     </div>
 

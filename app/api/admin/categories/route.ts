@@ -73,12 +73,13 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { name, slug, description } = body;
+        const { name, slug, description, sort_order } = body;
 
         const { data, error } = await supabaseAdmin.from('categories').insert({
             name,
             slug,
-            description
+            description,
+            sort_order: sort_order ?? 0
         }).select().single();
 
         if (error) throw error;
@@ -109,12 +110,17 @@ export async function PUT(req: Request) {
 
     try {
         const body = await req.json();
-        const { id, name, slug, description } = body;
+        const { id, name, slug, description, sort_order } = body;
 
         if (!id) throw new Error("ID required");
 
+        const updateData: Record<string, unknown> = { name, slug, description };
+        if (sort_order !== undefined) {
+            updateData.sort_order = sort_order;
+        }
+
         const { data, error } = await supabaseAdmin.from('categories')
-            .update({ name, slug, description })
+            .update(updateData)
             .eq('id', id)
             .select()
             .single();

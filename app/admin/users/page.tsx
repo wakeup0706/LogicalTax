@@ -130,13 +130,15 @@ export default function AdminUsers() {
     };
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-8">ユーザー管理</h1>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Create User Form */}
-                <div className="w-full lg:w-1/3">
-                    <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 sticky top-4">
+        <>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Left Panel - Title + Form (Sticky) */}
+                <div className="xl:col-span-1 h-fit xl:sticky xl:top-4 space-y-4">
+                    {/* Title */}
+                    <h1 className="text-3xl font-bold">ユーザー管理</h1>
+                    
+                    {/* Create User Form */}
+                    <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
                         <h2 className="text-xl font-semibold mb-4 text-purple-400">新規ユーザー作成</h2>
                         <form onSubmit={handleCreate} className="space-y-4">
                             {msg && (
@@ -187,7 +189,7 @@ export default function AdminUsers() {
                 </div>
 
                 {/* User List Table */}
-                <div className="w-full lg:w-2/3">
+                <div className="xl:col-span-2">
                     <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
                         <table className="w-full text-left">
                             <thead className="bg-slate-700/50 text-slate-300">
@@ -334,6 +336,6 @@ export default function AdminUsers() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

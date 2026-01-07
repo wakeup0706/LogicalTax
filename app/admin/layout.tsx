@@ -59,7 +59,7 @@ export default async function AdminLayout({
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto p-8">
+            <main className="flex-1 overflow-y-auto p-8">
                 {children}
             </main>
         </div>

@@ -14,6 +14,7 @@ export default function CategoryDetail() {
     const [name, setName] = useState("");
     const [slug, setSlug] = useState("");
     const [desc, setDesc] = useState("");
+    const [sortOrder, setSortOrder] = useState(0);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -34,6 +35,7 @@ export default function CategoryDetail() {
                     setName(result.data.name);
                     setSlug(result.data.slug);
                     setDesc(result.data.description || "");
+                    setSortOrder(result.data.sort_order || 0);
                 }
             } catch (error) {
                 alert("カテゴリーが見つかりません");
@@ -52,7 +54,7 @@ export default function CategoryDetail() {
         const res = await fetch('/api/admin/categories', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: category.id, name, slug, description: desc }),
+            body: JSON.stringify({ id: category.id, name, slug, description: desc, sort_order: sortOrder }),
         });
 
         const data = await res.json();
@@ -126,6 +128,20 @@ export default function CategoryDetail() {
                                 required
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">表示順序</label>
+                        <input
+                            type="number"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
+                            className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                            min="0"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">
+                            数値が小さいほど上位に表示されます（0 = 最優先）
+                        </p>
                     </div>
 
                     <div>

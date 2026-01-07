@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { title, question, answer, category_id, is_free } = body;
+        const { title, question, answer, category_id, is_free, sort_order } = body;
 
         // Force only 5 free questions max
         if (is_free) {
@@ -93,7 +93,8 @@ export async function POST(req: Request) {
             answer_content: answer,
             category_id,
             is_published: true,
-            is_free: is_free || false
+            is_free: is_free || false,
+            sort_order: sort_order || 0
         }).select().single();
 
         if (error) throw error;
@@ -124,7 +125,7 @@ export async function PUT(req: Request) {
 
     try {
         const body = await req.json();
-        const { id, title, question, answer, category_id, is_published, is_free } = body;
+        const { id, title, question, answer, category_id, is_published, is_free, sort_order } = body;
 
         if (!id) throw new Error("ID required");
 
@@ -152,7 +153,8 @@ export async function PUT(req: Request) {
                 answer_content: answer,
                 category_id,
                 is_published,
-                is_free
+                is_free,
+                sort_order: sort_order ?? 0
             })
             .eq('id', id)
             .select()

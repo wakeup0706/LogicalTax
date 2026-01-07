@@ -56,3 +56,6 @@ Desktop.ini
 
 # Logs
 *.log
+
+# Supabase migrations (contain sensitive schema info)
+supabase/migration_phase3.sql

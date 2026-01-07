@@ -6,10 +6,11 @@ import { stripe } from '@/lib/stripe';
 import Link from 'next/link';
 import UserNav from '@/components/UserNav';
 import { Category } from '@/types/database';
+import QAListClient from './QAListClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function QAPage(props: { searchParams: Promise<{ cat?: string }> }) {
+export default async function QAPage(props: { searchParams: Promise<{ cat?: string; q?: string }> }) {
     const searchParams = await props.searchParams;
     const session = await getServerSession(authOptions);
 
@@ -75,7 +76,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
     }
 
     // 2. Fetch Data
-    const { cat } = searchParams;
+    const { cat, q } = searchParams;
 
     // Fetch Categories
     const { data: categories } = await supabaseAdmin
@@ -83,34 +84,44 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
         .select('*')
         .order('sort_order') as { data: Category[] | null };
 
-    // Fetch Q&A
+    // Fetch Q&A - with optional search
     let qaQuery = supabaseAdmin
-    
         .from('qa')
-        .select('id, question_title, answer_content, category_id, is_published, categories(name)')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
+        .select('id, question_title, question_content, answer_content, category_id, is_published, is_free, sort_order, categories(name)')
+        .eq('is_published', true);
 
     if (cat) {
         qaQuery = qaQuery.eq('category_id', cat);
     }
 
+    // Add search filter if query present
+    if (q && q.trim().length >= 2) {
+        qaQuery = qaQuery.or(`question_title.ilike.%${q}%,question_content.ilike.%${q}%,answer_content.ilike.%${q}%`);
+    }
+
+    qaQuery = qaQuery.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+
     const { data: qaList } = await qaQuery;
 
     // 3. Render
     return (
-        <div className="min-h-screen bg-slate-900 text-white">
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
             {/* Header */}
-            <header className="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-10">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
-                    <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
-                        LogicalTax Q&A
-                    </h1>
+            <header className="bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 p-4 sticky top-0 z-20">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <Link href="/qa" className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                            <span className="text-white font-bold text-lg">L</span>
+                        </div>
+                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+                            LogicalTax Q&A
+                        </h1>
+                    </Link>
                     <div className="flex items-center gap-4">
                         {userData?.is_admin && (
                             <Link
                                 href="/admin"
-                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all hover:shadow-lg hover:shadow-indigo-500/20"
                             >
                                 管理画面へ
                             </Link>
@@ -120,60 +131,62 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
                 </div>
             </header>
 
-            <div className="max-w-6xl mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8">
+            <div className="max-w-7xl mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-8">
                 {/* Sidebar: Categories */}
-                <aside className="w-full md:w-64 flex-shrink-0">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">カテゴリー</h3>
-                    <div className="flex flex-row md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                        <Link
-                            href="/qa"
-                            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${!cat ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
-                        >
-                            すべての質問
-                        </Link>
-                        {categories?.map((c) => (
+                <aside className="w-full lg:w-72 flex-shrink-0">
+                    <div className="lg:sticky lg:top-24">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+                            </svg>
+                            カテゴリー
+                        </h3>
+                        <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
                             <Link
-                                key={c.id}
-                                href={`/qa?cat=${c.id}`}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${cat === c.id ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                                href="/qa"
+                                className={`px-4 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${!cat
+                                    ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border-transparent shadow-lg shadow-emerald-500/20'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 border-slate-700/50 hover:border-slate-600'
+                                    }`}
                             >
-                                {c.name}
+                                <span className="flex items-center gap-2">
+                                    <span className="text-lg">📋</span>
+                                    すべての質問
+                                </span>
                             </Link>
-                        ))}
+                            {categories?.map((c, idx) => {
+                                const icons = ['💰', '📊', '🏢', '📝', '⚖️', '💼', '📈', '🔍'];
+                                return (
+                                    <Link
+                                        key={c.id}
+                                        href={`/qa?cat=${c.id}`}
+                                        className={`px-4 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${cat === c.id
+                                            ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border-transparent shadow-lg shadow-emerald-500/20'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 border-slate-700/50 hover:border-slate-600'
+                                            }`}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <span className="text-lg">{icons[idx % icons.length]}</span>
+                                            {c.name}
+                                        </span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     </div>
                 </aside>
 
-                {/* Main Content: Q&A List */}
-                <main className="flex-1">
-                    <h2 className="text-2xl font-bold mb-6">
-                        {cat ? categories?.find(c => c.id === cat)?.name : '最新の質問'}
-                    </h2>
-
-                    <div className="space-y-4">
-                        {qaList?.map((item: any) => (
-                            <Link href={`/qa/${item.id}`} key={item.id} className="block group">
-                                <div className="bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-indigo-500/50 p-6 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/10">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <span className="px-2 py-1 rounded text-xs font-bold bg-slate-700 text-indigo-300">
-                                            {item.categories?.name}
-                                        </span>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">
-                                        {item.question_title}
-                                    </h3>
-                                    <p className="text-slate-400 line-clamp-2 text-sm">
-                                        {item.answer_content}
-                                    </p>
-                                </div>
-                            </Link>
-                        ))}
-
-                        {qaList?.length === 0 && (
-                            <div className="text-center py-20 bg-slate-800/30 rounded-xl border border-dashed border-slate-700">
-                                <p className="text-slate-500">このカテゴリーにはまだ質問がありません。</p>
-                            </div>
-                        )}
-                    </div>
+                {/* Main Content */}
+                <main className="flex-1 min-w-0">
+                    {/* Pass to client component for interactive search */}
+                    <QAListClient
+                        key={cat || 'all'}
+                        initialQAList={qaList || []}
+                        categories={categories || []}
+                        currentCategory={cat || null}
+                        initialQuery={q || ''}
+                        isAdmin={userData?.is_admin || false}
+                    />
                 </main>
             </div>
         </div>

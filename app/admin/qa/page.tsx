@@ -16,11 +16,13 @@ export default function AdminQA() {
     const [aContent, setAContent] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [isFree, setIsFree] = useState(false);
+    const [sortOrder, setSortOrder] = useState(0);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
     const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+    const [reordering, setReordering] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
@@ -29,12 +31,19 @@ export default function AdminQA() {
         const { data: catData } = await supabase.from("categories").select("*").order("sort_order");
         if (catData) setCategories(catData);
 
-        // Fetch QA - now via API to bypass any RLS issues just in case, or using a public view if policy allows.
-        // For admin list, let's stick to the secure API route we made for consistency?
-        // Actually the API route supports GET now. Let's use the API for guaranteed access.
+        // Fetch QA via API
         const res = await fetch('/api/admin/qa');
         const data = await res.json();
-        if (data.data) setQaItems(data.data);
+        if (data.data) {
+            // Sort by sort_order then created_at
+            const sorted = [...data.data].sort((a: QA, b: QA) => {
+                if ((a.sort_order || 0) !== (b.sort_order || 0)) {
+                    return (a.sort_order || 0) - (b.sort_order || 0);
+                }
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            });
+            setQaItems(sorted);
+        }
 
         setLoading(false);
     };
@@ -55,21 +64,24 @@ export default function AdminQA() {
                 question: qContent,
                 answer: aContent,
                 category_id: categoryId,
-                is_published: true, // Default to published
-                is_free: isFree
+                is_published: true,
+                is_free: isFree,
+                sort_order: sortOrder
             }),
         });
 
         const data = await res.json();
 
         if (data.error) {
-            alert("エラー: " + data.error);
+            setErrorMessage(data.error);
+            setShowError(true);
         } else {
             setTitle("");
             setQContent("");
             setAContent("");
             setCategoryId("");
             setIsFree(false);
+            setSortOrder(0);
             fetchData();
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
@@ -85,11 +97,82 @@ export default function AdminQA() {
         const res = await fetch(`/api/admin/qa?id=${deleteTarget}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.error) {
-            alert("エラー: " + data.error);
+            setErrorMessage(data.error);
+            setShowError(true);
         } else {
             fetchData();
         }
         setDeleteTarget(null);
+    };
+
+    const moveItem = async (id: string, direction: 'up' | 'down') => {
+        const currentIndex = qaItems.findIndex(item => item.id === id);
+        if (currentIndex === -1) return;
+        
+        const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        if (newIndex < 0 || newIndex >= qaItems.length) return;
+
+        setReordering(true);
+
+        // Swap sort orders
+        const currentItem = qaItems[currentIndex];
+        const swapItem = qaItems[newIndex];
+
+        // Update both items
+        await Promise.all([
+            fetch('/api/admin/qa', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: currentItem.id,
+                    title: currentItem.question_title,
+                    question: currentItem.question_content,
+                    answer: currentItem.answer_content,
+                    category_id: currentItem.category_id,
+                    is_published: currentItem.is_published,
+                    is_free: currentItem.is_free,
+                    sort_order: newIndex
+                }),
+            }),
+            fetch('/api/admin/qa', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: swapItem.id,
+                    title: swapItem.question_title,
+                    question: swapItem.question_content,
+                    answer: swapItem.answer_content,
+                    category_id: swapItem.category_id,
+                    is_published: swapItem.is_published,
+                    is_free: swapItem.is_free,
+                    sort_order: currentIndex
+                }),
+            })
+        ]);
+
+        await fetchData();
+        setReordering(false);
+    };
+
+    const togglePublish = async (qa: QA) => {
+        const res = await fetch('/api/admin/qa', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: qa.id,
+                title: qa.question_title,
+                question: qa.question_content,
+                answer: qa.answer_content,
+                category_id: qa.category_id,
+                is_published: !qa.is_published,
+                is_free: qa.is_free,
+                sort_order: qa.sort_order
+            }),
+        });
+        const data = await res.json();
+        if (!data.error) {
+            fetchData();
+        }
     };
 
     const getCategoryName = (id: string | null) => {
@@ -99,22 +182,39 @@ export default function AdminQA() {
     };
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-8">Q&A 管理 (Q&A Management)</h1>
+        <>
+            {/* Legend - Top Right */}
+            <div className="flex justify-end mb-4">
+                <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <span className="flex items-center gap-1">
+                        <span className="text-emerald-400">⭕</span> 公開中
+                    </span>
+                    <span className="text-slate-600">|</span>
+                    <span className="flex items-center gap-1">
+                        <span className="text-red-400">❌</span> 非公開
+                    </span>
+                </div>
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Create Form */}
-                <div className="lg:col-span-1 p-6 rounded-xl border border-slate-700 bg-slate-800 h-fit">
-                    <h2 className="text-xl font-semibold mb-4 text-cyan-400">
-                        新規 Q&A 追加
-                    </h2>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Left Panel - Title + Form (Sticky) */}
+                <div className="xl:col-span-1 h-fit xl:sticky xl:top-4 space-y-4">
+                    {/* Title */}
+                    <h1 className="text-3xl font-bold">Q&A 管理</h1>
+                    
+                    {/* Create Form */}
+                    <div className="p-6 rounded-2xl border border-slate-700 bg-slate-800/50">
+                        <h2 className="text-xl font-semibold mb-4 text-cyan-400 flex items-center gap-2">
+                            <span className="text-2xl">📝</span>
+                            新規 Q&A 追加
+                        </h2>
                     <form onSubmit={handleCreate} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-300 mb-1">カテゴリー</label>
                             <select
                                 value={categoryId}
                                 onChange={(e) => setCategoryId(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-cyan-500 outline-none"
+                                className="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-cyan-500 outline-none"
                                 required
                             >
                                 <option value="">カテゴリーを選択</option>
@@ -129,7 +229,7 @@ export default function AdminQA() {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white"
+                                className="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-white"
                                 required
                                 placeholder="質問の短い要約..."
                             />
@@ -139,7 +239,7 @@ export default function AdminQA() {
                             <textarea
                                 value={qContent}
                                 onChange={(e) => setQContent(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white"
+                                className="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-white"
                                 rows={3}
                                 required
                                 placeholder="質問の詳細..."
@@ -150,14 +250,27 @@ export default function AdminQA() {
                             <textarea
                                 value={aContent}
                                 onChange={(e) => setAContent(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white"
+                                className="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-white"
                                 rows={4}
                                 required
                                 placeholder="専門家の回答..."
                             />
                         </div>
 
-                        <div className="flex items-center gap-2 bg-slate-900/50 p-3 rounded border border-slate-700/50">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-1">表示順序</label>
+                            <input
+                                type="number"
+                                value={sortOrder}
+                                onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
+                                className="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-white"
+                                min="0"
+                                placeholder="0 = 最優先"
+                            />
+                            <p className="text-xs text-slate-500 mt-1">数値が小さいほど上位に表示されます</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
                             <input
                                 type="checkbox"
                                 id="isFree"
@@ -166,63 +279,122 @@ export default function AdminQA() {
                                 className="w-4 h-4 rounded border-slate-600 text-cyan-500 focus:ring-cyan-500 bg-slate-700"
                             />
                             <label htmlFor="isFree" className="text-sm text-slate-300 cursor-pointer select-none">
-                                無料公開 (Free Access)
+                                🆓 無料公開 (Free Access)
                             </label>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-medium transition"
+                            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl font-medium transition shadow-lg shadow-indigo-500/20"
                         >
                             Q&Aを公開
                         </button>
                     </form>
+                    </div>
                 </div>
 
                 {/* List */}
-                <div className="lg:col-span-2">
-                    <h2 className="text-xl font-semibold mb-4 text-white">最新の Q&A</h2>
+                <div className="xl:col-span-2">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-semibold text-white">Q&A 一覧 ({qaItems.length}件)</h2>
+                        {reordering && (
+                            <span className="text-sm text-cyan-400 animate-pulse">並び替え中...</span>
+                        )}
+                    </div>
                     {loading ? (
-                        <p className="text-slate-400">読み込み中...</p>
+                        <div className="flex items-center justify-center py-20">
+                            <div className="animate-spin h-8 w-8 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
+                        </div>
                     ) : (
-                        <div className="space-y-4">
-                            {qaItems.map((qa) => (
-                                <div key={qa.id} className="bg-slate-800 p-5 rounded-lg border border-slate-700 hover:border-slate-600 transition group">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className="text-xs font-bold px-2 py-1 rounded bg-indigo-900 text-indigo-300 uppercase tracking-wider">
-                                            {getCategoryName(qa.category_id)}
-                                        </span>
-                                        <div className="flex gap-2">
-                                            <Link
-                                                href={`/admin/qa/${qa.id}`}
-                                                className="text-cyan-400 hover:text-cyan-300 text-sm font-medium"
-                                            >
-                                                編集 (Edit)
-                                            </Link>
+                        <div className="space-y-3">
+                            {qaItems.map((qa, index) => (
+                                <div key={qa.id} className={`relative bg-slate-800/50 p-5 rounded-xl border-2 transition-all group ${
+                                    qa.is_published 
+                                        ? 'border-emerald-500/30 hover:border-emerald-500/50' 
+                                        : 'border-red-500/30 hover:border-red-500/50 opacity-75'
+                                }`}>
+                                    {/* Order Controls */}
+                                    <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center justify-center gap-1 bg-slate-900/50 rounded-l-xl border-r border-slate-700/50">
+                                        <button
+                                            onClick={() => moveItem(qa.id, 'up')}
+                                            disabled={index === 0 || reordering}
+                                            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                            title="上に移動"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                                            </svg>
+                                        </button>
+                                        <span className="text-xs font-mono text-slate-500 w-6 text-center">{index + 1}</span>
                                             <button
-                                                onClick={() => confirmDelete(qa.id)}
-                                                className="text-red-400 hover:text-red-300 text-sm font-medium ml-2"
-                                            >
-                                                削除 (Delete)
+                                            onClick={() => moveItem(qa.id, 'down')}
+                                            disabled={index === qaItems.length - 1 || reordering}
+                                            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                            title="下に移動"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                             </button>
-                                        </div>
                                     </div>
-                                    <Link href={`/admin/qa/${qa.id}`} className="block group-hover:bg-slate-700/30 -mx-5 -mb-5 px-5 pb-5 pt-2 rounded-b-lg transition">
-                                        <div className="flex items-center gap-2 mb-1">
+
+                                    <div className="ml-12 pl-4">
+                                        {/* Top bar */}
+                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                            <span className="text-xs font-bold px-2 py-1 rounded-lg bg-indigo-900/50 text-indigo-300 uppercase tracking-wider">
+                                                {getCategoryName(qa.category_id)}
+                                            </span>
                                             {qa.is_free && (
-                                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border border-green-500/50 text-green-400 uppercase">
-                                                    FREE
+                                                <span className="text-xs font-bold px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                                    🆓 FREE
                                                 </span>
                                             )}
-                                            <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition">{qa.question_title}</h3>
+                                            
+                                            {/* Status Toggle */}
+                                            <button
+                                                onClick={() => togglePublish(qa)}
+                                                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium transition ${
+                                                    qa.is_published
+                                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'
+                                                        : 'bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30'
+                                                }`}
+                                            >
+                                                <span>{qa.is_published ? '⭕' : '❌'}</span>
+                                                {qa.is_published ? '公開中' : '非公開'}
+                                            </button>
+
+                                            {/* Actions */}
+                                            <div className="ml-auto flex gap-2">
+                                                <Link
+                                                    href={`/admin/qa/${qa.id}`}
+                                                    className="text-cyan-400 hover:text-cyan-300 text-sm font-medium px-3 py-1 rounded-lg bg-cyan-900/20 hover:bg-cyan-900/30 border border-cyan-900/30 transition"
+                                                >
+                                                    編集
+                                                </Link>
+                                                <button
+                                                    onClick={() => confirmDelete(qa.id)}
+                                                    className="text-red-400 hover:text-red-300 text-sm font-medium px-3 py-1 rounded-lg bg-red-900/20 hover:bg-red-900/30 border border-red-900/30 transition"
+                                                >
+                                                    削除
+                                                </button>
+                                            </div>
                                         </div>
+
+                                        {/* Content */}
+                                        <Link href={`/admin/qa/${qa.id}`} className="block group/link">
+                                            <h3 className="text-lg font-bold text-white group-hover/link:text-cyan-400 transition mb-1">
+                                                {qa.question_title}
+                                            </h3>
                                         <p className="text-sm text-slate-400 line-clamp-2">{qa.question_content}</p>
                                     </Link>
+                                    </div>
                                 </div>
                             ))}
                             {qaItems.length === 0 && (
-                                <div className="p-8 text-center border-2 border-dashed border-slate-700 rounded-xl">
+                                <div className="p-12 text-center border-2 border-dashed border-slate-700 rounded-2xl">
+                                    <div className="text-5xl mb-4">📭</div>
                                     <p className="text-slate-500 italic">Q&Aがまだありません。</p>
+                                    <p className="text-slate-600 text-sm mt-2">左のフォームから最初のQ&Aを作成しましょう</p>
                                 </div>
                             )}
                         </div>
@@ -232,9 +404,9 @@ export default function AdminQA() {
 
             {/* Delete Modal */}
             {deleteTarget && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-2xl max-w-sm w-full">
-                        <h3 className="text-lg font-bold text-white mb-2">確認</h3>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl max-w-sm w-full">
+                        <h3 className="text-lg font-bold text-white mb-2">⚠️ 確認</h3>
                         <p className="text-slate-300 mb-6">
                             本当にこのQ&Aを削除しますか？<br />
                             <span className="text-xs text-slate-500">この操作は取り消せません。</span>
@@ -242,13 +414,13 @@ export default function AdminQA() {
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setDeleteTarget(null)}
-                                className="px-4 py-2 rounded text-slate-300 hover:bg-slate-700 transition"
+                                className="px-4 py-2 rounded-xl text-slate-300 hover:bg-slate-700 transition"
                             >
                                 キャンセル
                             </button>
                             <button
                                 onClick={executeDelete}
-                                className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white font-medium transition"
+                                className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition"
                             >
                                 削除する
                             </button>
@@ -259,9 +431,9 @@ export default function AdminQA() {
 
             {/* Success Modal */}
             {showSuccess && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-slate-800 border border-cyan-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-slate-800 border border-cyan-500/50 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-emerald-500"></div>
                         <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-400">
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
@@ -281,8 +453,8 @@ export default function AdminQA() {
 
             {/* Error Modal */}
             {showError && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-slate-800 border border-red-500/50 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-slate-800 border border-red-500/50 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-red-600"></div>
                         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -302,6 +474,6 @@ export default function AdminQA() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
