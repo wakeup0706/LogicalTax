@@ -6,47 +6,61 @@ import { NextResponse } from "next/server";
 // This endpoint is called when user returns from Stripe with ?success=true
 // It creates a subscription record so user can access Q&A
 // Note: In production, this should be handled by webhook for reliability
-export async function POST() {
+// This endpoint checks if the user has an active subscription
+// Used by the client to poll for status after a Stripe Checkout success
+import { stripe } from "@/lib/stripe";
+
+export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
+    const body = await req.json().catch(() => ({}));
+    const { session_id } = body;
 
     if (!session?.user) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
     try {
-        // Check if user already has an active subscription
-        const { data: existingSub } = await supabaseAdmin
+        // 1. First, check DB for active subscription (Fastest)
+        const { data: sub } = await supabaseAdmin
             .from('subscriptions')
-            .select('*')
+            .select('status')
             .eq('user_id', session.user.id)
-            .eq('status', 'active')
-            .single();
+            .in('status', ['active', 'trialing'])
+            .maybeSingle();
 
-        if (existingSub) {
-            // Already has subscription, no need to create
-            return NextResponse.json({ success: true, message: 'Subscription already exists' });
+        if (sub) {
+            return NextResponse.json({ active: true, status: sub.status });
         }
 
-        // Create a temporary subscription record
-        // Note: In production, webhook would create this with real Stripe subscription ID
-        const tempSubId = `sub_temp_${Date.now()}`;
-        const currentPeriodEnd = new Date();
-        currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1); // 1 month from now
+        // 2. Fallback: If DB not ready, check Stripe directly using session_id (Reliable)
+        if (session_id) {
+            console.log('Checking Stripe directly for session:', session_id);
+            const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
 
-        await supabaseAdmin.from('subscriptions').upsert({
-            id: tempSubId,
-            user_id: session.user.id,
-            status: 'active',
-            price_id: 'price_temp_pending_webhook',
-            cancel_at_period_end: false,
-            current_period_end: currentPeriodEnd.toISOString(),
-        });
+            if (checkoutSession.payment_status === 'paid' && checkoutSession.subscription) {
+                const subscriptionId = checkoutSession.subscription as string;
+                const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-        console.log('✅ Temporary subscription created for user:', session.user.id);
+                // Manually sync to DB immediately
+                await supabaseAdmin.from('subscriptions').upsert({
+                    id: subscriptionId,
+                    user_id: session.user.id, // User ID is explicitly trusted from auth session here or metadata
+                    status: stripeSubscription.status,
+                    price_id: stripeSubscription.items.data[0].price.id,
+                    cancel_at_period_end: stripeSubscription.cancel_at_period_end,
+                    current_period_end: stripeSubscription.items.data[0].current_period_end
+                        ? new Date(stripeSubscription.items.data[0].current_period_end * 1000).toISOString()
+                        : null,
+                });
 
-        return NextResponse.json({ success: true });
+                return NextResponse.json({ active: true, status: stripeSubscription.status });
+            }
+        }
+
+        return NextResponse.json({ active: false, status: 'none' });
+
     } catch (error: any) {
-        console.error('Error confirming payment:', error);
+        console.error('Error checking subscription status:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

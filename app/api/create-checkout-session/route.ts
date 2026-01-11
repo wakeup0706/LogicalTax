@@ -47,7 +47,7 @@ export async function POST(req: Request) {
                 userId: session.user.id,
             },
             customer_email: session.user.email || undefined,
-            success_url: `${baseUrl}/checkout?success=true`,
+            success_url: `${baseUrl}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/checkout?canceled=true`,
         });
 

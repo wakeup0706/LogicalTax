@@ -12,6 +12,8 @@ function CheckoutContent() {
     const canceled = searchParams.get('canceled');
     const success = searchParams.get('success');
 
+    const sessionId = searchParams.get('session_id');
+
     // Redirect to login if not authenticated
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -21,21 +23,42 @@ function CheckoutContent() {
 
     // Handle success (from Stripe Checkout)
     useEffect(() => {
-        const confirmPayment = async () => {
-            if (success === 'true' && session) {
+        let isCancelled = false;
+        let pollCount = 0;
+        const maxPolls = 20; // 20 * 3s = 60s timeout
+
+        const checkSubscriptionStatus = async () => {
+            if (success === 'true' && session && !isCancelled) {
+                setLoading(true); // Reuse loading state for UI feedback
                 try {
-                    // Save subscription to database
-                    await fetch('/api/confirm-payment', { method: 'POST' });
+                    const res = await fetch('/api/confirm-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_id: sessionId })
+                    });
+                    const data = await res.json();
+
+                    if (data.active) {
+                        router.push('/qa');
+                    } else if (pollCount < maxPolls) {
+                        pollCount++;
+                        setTimeout(checkSubscriptionStatus, 3000); // Poll every 3 seconds
+                    } else {
+                        setLoading(false);
+                        alert('お支払いの確認に時間がかかっています。しばらくしてから再度アクセスしてください。');
+                    }
                 } catch (e) {
-                    console.error('Error confirming payment:', e);
+                    console.error('Error checking payment:', e);
+                    setLoading(false);
                 }
-                // Redirect to Q&A page
-                setTimeout(() => {
-                    router.push('/qa');
-                }, 2000);
             }
         };
-        confirmPayment();
+
+        if (success === 'true' && session) {
+            checkSubscriptionStatus();
+        }
+
+        return () => { isCancelled = true; };
     }, [success, session, router]);
 
     const handleSubscribe = async () => {

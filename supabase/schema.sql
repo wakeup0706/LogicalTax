@@ -107,3 +107,71 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+
+-- ===========================================
+-- FULL-TEXT SEARCH TRIGGER FOR Q&A
+-- ===========================================
+
+-- Function to auto-update search_vector on Q&A insert/update
+create or replace function qa_search_trigger() returns trigger as $$
+begin
+  NEW.search_vector := 
+    setweight(to_tsvector('simple', coalesce(NEW.question_title, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(NEW.question_content, '')), 'B') ||
+    setweight(to_tsvector('simple', coalesce(NEW.answer_content, '')), 'C');
+  return NEW;
+end;
+$$ language plpgsql;
+
+-- Trigger to auto-update search_vector
+create trigger qa_search_update
+  before insert or update on public.qa
+  for each row
+  execute function qa_search_trigger();
+
+
+-- ===========================================
+-- SEARCH FUNCTION FOR Q&A (Optional but useful)
+-- ===========================================
+
+-- Search function with ranking support
+create or replace function search_qa(search_term text)
+returns table (
+  id uuid,
+  question_title text,
+  question_content text,
+  answer_content text,
+  category_id uuid,
+  is_published boolean,
+  is_free boolean,
+  sort_order integer,
+  created_at timestamptz,
+  updated_at timestamptz,
+  rank real
+) as $$
+begin
+  return query
+  select 
+    qa.id,
+    qa.question_title,
+    qa.question_content,
+    qa.answer_content,
+    qa.category_id,
+    qa.is_published,
+    qa.is_free,
+    qa.sort_order,
+    qa.created_at,
+    qa.updated_at,
+    ts_rank(qa.search_vector, plainto_tsquery('simple', search_term)) +
+    case when qa.question_title ilike '%' || search_term || '%' then 0.5 else 0 end +
+    case when qa.question_content ilike '%' || search_term || '%' then 0.3 else 0 end as rank
+  from public.qa
+  where 
+    qa.search_vector @@ plainto_tsquery('simple', search_term)
+    or qa.question_title ilike '%' || search_term || '%'
+    or qa.question_content ilike '%' || search_term || '%'
+    or qa.answer_content ilike '%' || search_term || '%'
+  order by rank desc, qa.sort_order asc, qa.created_at desc;
+end;
+$$ language plpgsql;
