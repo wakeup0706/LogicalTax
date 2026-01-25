@@ -28,30 +28,30 @@ export default async function AdminLayout({
     }
 
     return (
-        <div className="flex h-screen bg-slate-900 text-white">
+        <div className="flex h-screen">
             {/* Sidebar */}
-            <aside className="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
-                <div className="p-6 border-b border-slate-700">
-                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
+            <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+                <div className="p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#2563eb] to-[#1e40af]">
                         管理パネル
                     </h2>
                 </div>
                 <nav className="p-4 space-y-2 flex-1">
-                    <Link href="/admin" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+                    <Link href="/admin" className="block px-4 py-2 rounded text-[#444444] hover:bg-gray-100 hover:text-[#111111] transition">
                         ダッシュボード
                     </Link>
-                    <Link href="/admin/qa" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+                    <Link href="/admin/qa" className="block px-4 py-2 rounded text-[#444444] hover:bg-gray-100 hover:text-[#111111] transition">
                         Q&A管理
                     </Link>
-                    <Link href="/admin/categories" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+                    <Link href="/admin/categories" className="block px-4 py-2 rounded text-[#444444] hover:bg-gray-100 hover:text-[#111111] transition">
                         カテゴリー管理
                     </Link>
-                    <Link href="/admin/users" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+                    <Link href="/admin/users" className="block px-4 py-2 rounded text-[#444444] hover:bg-gray-100 hover:text-[#111111] transition">
                         ユーザー管理
                     </Link>
                 </nav>
-                <div className="p-4 mt-auto border-t border-slate-700 space-y-4">
-                    <Link href="/" className="block text-sm text-slate-400 hover:text-white">
+                <div className="p-4 mt-auto border-t border-gray-200 space-y-4">
+                    <Link href="/" className="block text-sm text-[#444444] hover:text-[#111111]">
                         ← アプリに戻る
                     </Link>
                     <UserNav user={{ name: session.user.name, email: session.user.email }} />

@@ -7,13 +7,13 @@ import { useState, Suspense } from 'react';
 
 // Icons
 const MailIcon = () => (
-    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
     </svg>
 );
 
 const LockIcon = () => (
-    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
     </svg>
 );
@@ -79,19 +79,19 @@ function LoginForm() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background Gradients */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-blue-700/30 rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob"></div>
-                <div className="absolute top-[20%] left-[20%] w-[40%] h-[40%] bg-purple-700/30 rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob animation-delay-2000"></div>
-                <div className="absolute top-[50%] right-[30%] w-[30%] h-[30%] bg-indigo-700/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
+                <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-blue-200/30 rounded-full mix-blend-multiply filter blur-[128px] opacity-50"></div>
+                <div className="absolute top-[20%] left-[20%] w-[40%] h-[40%] bg-purple-200/30 rounded-full mix-blend-multiply filter blur-[128px] opacity-50"></div>
+                <div className="absolute top-[50%] right-[30%] w-[30%] h-[30%] bg-indigo-200/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40"></div>
             </div>
 
             {/* Back to Home */}
             <div className="absolute top-6 left-6 z-20">
-                <Link 
-                    href="/" 
-                    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
+                <Link
+                    href="/"
+                    className="flex items-center gap-2 text-[#444444] hover:text-[#111111] transition-colors group"
                 >
                     <ArrowLeftIcon />
                     <span className="text-sm font-medium">ホームに戻る</span>
@@ -102,27 +102,27 @@ function LoginForm() {
                 {/* Decorative Element */}
                 <div className="flex justify-center mb-8">
                     <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <div className="w-16 h-16 bg-gradient-to-br from-[#2563eb] to-[#1e40af] rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-[#2563eb] to-[#1e40af] rounded-2xl blur opacity-30"></div>
                     </div>
                 </div>
 
-                <div className="bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     {/* Card glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
-                    
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-purple-50/50 pointer-events-none"></div>
+
                     <div className="relative">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-white mb-3">おかえりなさい</h1>
-                            <p className="text-slate-400">LogicalTaxアカウントにログイン</p>
+                            <h1 className="text-3xl font-bold text-[#111111] mb-3">おかえりなさい</h1>
+                            <p className="text-[#444444]">LogicalTaxアカウントにログイン</p>
                         </div>
 
                         {redirectTo === '/checkout' && (
-                            <div className="mb-6 bg-indigo-500/10 border border-indigo-500/50 text-indigo-200 text-sm p-4 rounded-xl text-center">
+                            <div className="mb-6 bg-indigo-50 border border-indigo-200 text-indigo-700 text-sm p-4 rounded-xl text-center">
                                 <svg className="w-5 h-5 inline-block mr-2 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -132,7 +132,7 @@ function LoginForm() {
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {error && (
-                                <div className="bg-red-500/10 border border-red-500/50 text-red-200 text-sm p-4 rounded-xl flex items-center gap-3">
+                                <div className="bg-red-50 border border-red-200 text-red-700 text-sm p-4 rounded-xl flex items-center gap-3">
                                     <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -141,7 +141,7 @@ function LoginForm() {
                             )}
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">メールアドレス</label>
+                                <label className="block text-sm font-medium text-[#444444] mb-2">メールアドレス</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <MailIcon />
@@ -152,7 +152,7 @@ function LoginForm() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-4 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
                                         placeholder="you@example.com"
                                     />
                                 </div>
@@ -160,8 +160,8 @@ function LoginForm() {
 
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-sm font-medium text-slate-300">パスワード</label>
-                                    <button type="button" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                                    <label className="block text-sm font-medium text-[#444444]">パスワード</label>
+                                    <button type="button" className="text-xs text-[#2563eb] hover:text-[#1e40af] transition-colors">
                                         パスワードを忘れた？
                                     </button>
                                 </div>
@@ -175,13 +175,13 @@ function LoginForm() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-12 py-3.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-12 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
                                         placeholder="••••••••"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#111111] transition-colors"
                                     >
                                         {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                     </button>
@@ -191,7 +191,7 @@ function LoginForm() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-indigo-500/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#1e40af] hover:from-[#1e40af] hover:to-[#1e3a8a] text-white font-semibold shadow-lg shadow-indigo-500/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -205,10 +205,10 @@ function LoginForm() {
                             </button>
                         </form>
 
-                        <div className="mt-8 pt-6 border-t border-slate-700/50 text-center">
-                            <p className="text-slate-400">
+                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                            <p className="text-[#444444]">
                                 アカウントをお持ちでないですか？{' '}
-                                <Link href="/register" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                                <Link href="/register" className="text-[#2563eb] hover:text-[#1e40af] font-semibold transition-colors">
                                     新規登録
                                 </Link>
                             </p>
@@ -223,12 +223,11 @@ function LoginForm() {
 export default function LoginPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2563eb]"></div>
             </div>
         }>
             <LoginForm />
         </Suspense>
     );
 }
-            

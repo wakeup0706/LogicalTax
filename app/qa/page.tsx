@@ -105,15 +105,15 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
 
     // 3. Render
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+        <div className="min-h-screen">
             {/* Header */}
-            <header className="bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 p-4 sticky top-0 z-20">
+            <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200 p-4 sticky top-0 z-20">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <Link href="/qa" className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563eb] to-[#1e40af] flex items-center justify-center shadow-lg shadow-indigo-500/20">
                             <span className="text-white font-bold text-lg">L</span>
                         </div>
-                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#2563eb] to-[#1e40af]">
                             LogicalTax Q&A
                         </h1>
                     </Link>
@@ -121,7 +121,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
                         {userData?.is_admin && (
                             <Link
                                 href="/admin"
-                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all hover:shadow-lg hover:shadow-indigo-500/20"
+                                className="px-4 py-2 rounded-lg bg-[#2563eb] hover:bg-[#1e40af] !text-white text-sm font-medium transition-all hover:shadow-lg hover:shadow-indigo-500/20"
                             >
                                 管理画面へ
                             </Link>
@@ -135,7 +135,7 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
                 {/* Sidebar: Categories */}
                 <aside className="w-full lg:w-72 flex-shrink-0">
                     <div className="lg:sticky lg:top-24">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-[#444444] uppercase tracking-wider mb-4 flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
                             </svg>
@@ -145,8 +145,8 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
                             <Link
                                 href="/qa"
                                 className={`px-4 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${!cat
-                                    ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border-transparent shadow-lg shadow-emerald-500/20'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 border-slate-700/50 hover:border-slate-600'
+                                    ? 'bg-[#2563eb] !text-white border-transparent shadow-lg shadow-indigo-500/20'
+                                    : 'bg-white text-[#444444] hover:bg-gray-50 border-gray-200 hover:border-gray-300'
                                     }`}
                             >
                                 <span className="flex items-center gap-2">
@@ -161,8 +161,8 @@ export default async function QAPage(props: { searchParams: Promise<{ cat?: stri
                                         key={c.id}
                                         href={`/qa?cat=${c.id}`}
                                         className={`px-4 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${cat === c.id
-                                            ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border-transparent shadow-lg shadow-emerald-500/20'
-                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 border-slate-700/50 hover:border-slate-600'
+                                            ? 'bg-[#2563eb] !text-white border-transparent shadow-lg shadow-indigo-500/20'
+                                            : 'bg-white text-[#444444] hover:bg-gray-50 border-gray-200 hover:border-gray-300'
                                             }`}
                                     >
                                         <span className="flex items-center gap-2">

@@ -49,7 +49,7 @@ export default function CategoryDetail() {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!category) return;
-        
+
         setSaving(true);
         const res = await fetch('/api/admin/categories', {
             method: 'PUT',
@@ -59,7 +59,7 @@ export default function CategoryDetail() {
 
         const data = await res.json();
         setSaving(false);
-        
+
         if (data.error) {
             alert("エラー: " + data.error);
         } else {
@@ -84,91 +84,91 @@ export default function CategoryDetail() {
         }
     };
 
-    if (loading) return <div className="p-8 text-slate-400">読み込み中...</div>;
+    if (loading) return <div className="p-8 text-[#444444]">読み込み中...</div>;
 
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/categories" className="text-slate-400 hover:text-white transition">
+                <Link href="/admin/categories" className="text-[#444444] hover:text-[#111111] transition">
                     ← 戻る
                 </Link>
-                <h1 className="text-3xl font-bold">カテゴリー詳細編集</h1>
+                <h1 className="text-3xl font-bold text-[#111111]">カテゴリー詳細編集</h1>
             </div>
 
-            <div className="bg-slate-800 p-8 rounded-xl border border-slate-700">
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
                 <form onSubmit={handleUpdate} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">ID</label>
+                        <label className="block text-sm font-medium text-[#444444] mb-1">ID</label>
                         <input
                             type="text"
                             value={category?.id || ''}
                             disabled
-                            className="w-full bg-slate-900/50 border border-slate-700 rounded px-3 py-2 text-slate-500 cursor-not-allowed font-mono text-sm"
+                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-[#444444] cursor-not-allowed font-mono text-sm"
                         />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1">カテゴリー名</label>
+                            <label className="block text-sm font-medium text-[#444444] mb-1">カテゴリー名</label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                                className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1">スラッグ (Slug)</label>
+                            <label className="block text-sm font-medium text-[#444444] mb-1">スラッグ (Slug)</label>
                             <input
                                 type="text"
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value)}
-                                className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                                className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
                                 required
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">表示順序</label>
+                        <label className="block text-sm font-medium text-[#444444] mb-1">表示順序</label>
                         <input
                             type="number"
                             value={sortOrder}
                             onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                            className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
                             min="0"
                         />
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-[#444444] mt-1">
                             数値が小さいほど上位に表示されます（0 = 最優先）
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">説明 (Detailed Explanation)</label>
+                        <label className="block text-sm font-medium text-[#444444] mb-1">説明 (Detailed Explanation)</label>
                         <textarea
                             value={desc}
                             onChange={(e) => setDesc(e.target.value)}
-                            className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition h-64"
+                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition h-64"
                             placeholder="カテゴリーの詳細な説明をここに記述してください..."
                         />
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-[#444444] mt-1">
                             ユーザーに表示されるカテゴリーの詳細な説明文です。詳しく記述することができます。
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-slate-700">
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={handleDelete}
-                            className="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/50 rounded font-medium transition"
+                            className="px-6 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded font-medium transition"
                         >
                             カテゴリーを削除
                         </button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
+                            className="px-8 py-3 bg-[#2563eb] hover:bg-[#1e40af] disabled:bg-[#2563eb]/70 disabled:cursor-not-allowed text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
                         >
                             {saving ? '保存中...' : '変更を保存する'}
                         </button>
