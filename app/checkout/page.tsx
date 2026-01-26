@@ -94,7 +94,7 @@ function CheckoutContent() {
     if (status === 'loading') {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2563eb]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -103,7 +103,7 @@ function CheckoutContent() {
     if (status === 'unauthenticated') {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2563eb]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -130,26 +130,26 @@ function CheckoutContent() {
                     </div>
                 )}
 
-                <div className="bg-white/80 backdrop-blur-xl border border-gray-300 p-8 rounded-2xl shadow-2xl">
+                <div className="bg-surface/80 backdrop-blur-xl border border-border p-8 rounded-2xl shadow-2xl">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#2563eb] to-[#1e40af] mb-2">
+                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-hover mb-2">
                             LogicalTax Pro
                         </h1>
-                        <p className="text-[#444444]">税務判断をサポートする究極のツール。</p>
+                        <p className="text-foreground-muted">税務判断をサポートする究極のツール。</p>
                     </div>
 
                     <div className="mb-8">
                         <div className="flex items-baseline justify-center mb-4">
-                            <span className="text-5xl font-extrabold text-[#111111]">¥10,000</span>
-                            <span className="text-xl text-[#444444] ml-2">/月</span>
+                            <span className="text-5xl font-extrabold text-foreground">¥10,000</span>
+                            <span className="text-xl text-foreground-muted ml-2">/月</span>
                         </div>
-                        <p className="text-center text-sm text-[#444444]">いつでもキャンセル可能。</p>
+                        <p className="text-center text-sm text-foreground-muted">いつでもキャンセル可能。</p>
                     </div>
 
                     <ul className="space-y-4 mb-8">
                         {['Q&A 無制限アクセス', '専門家による回答', '優先サポート', '日次アップデート'].map((feature) => (
-                            <li key={feature} className="flex items-center text-[#444444]">
-                                <svg className="w-5 h-5 text-[#2563eb] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li key={feature} className="flex items-center text-foreground-muted">
+                                <svg className="w-5 h-5 text-primary mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 {feature}
@@ -160,7 +160,7 @@ function CheckoutContent() {
                     <button
                         onClick={handleSubscribe}
                         disabled={loading}
-                        className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#1e40af] hover:from-[#1e40af] hover:to-[#1e3a8a] text-white font-semibold shadow-lg shadow-indigo-500/20 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-indigo-900 text-white font-semibold shadow-lg shadow-indigo-500/20 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {loading ? '処理中...' : session ? '今すぐ登録する' : 'ログインして登録する'}
                     </button>
@@ -174,7 +174,7 @@ export default function CheckoutPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2563eb]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
         }>
             <CheckoutContent />

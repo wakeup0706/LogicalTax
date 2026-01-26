@@ -103,25 +103,25 @@ export default function QaDetail() {
         }
     };
 
-    if (loading) return <div className="p-8 text-[#444444]">読み込み中...</div>;
+    if (loading) return <div className="p-8 text-foreground-muted">読み込み中...</div>;
 
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/qa" className="text-[#444444] hover:text-[#111111] transition">
+                <Link href="/admin/qa" className="text-foreground-muted hover:text-foreground transition">
                     ← 戻る
                 </Link>
-                <h1 className="text-3xl font-bold text-[#111111]">Q&A 詳細編集</h1>
+                <h1 className="text-3xl font-bold text-foreground">Q&A 詳細編集</h1>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-surface p-8 rounded-xl border border-border shadow-sm">
                 <form onSubmit={handleUpdate} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">カテゴリー</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">カテゴリー</label>
                         <select
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none"
                             required
                         >
                             <option value="">カテゴリーを選択</option>
@@ -132,32 +132,32 @@ export default function QaDetail() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">タイトル (質問の要約)</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">タイトル (質問の要約)</label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">質問詳細 (Question Details)</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">質問詳細 (Question Details)</label>
                         <textarea
                             value={qContent}
                             onChange={(e) => setQContent(e.target.value)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none min-h-[150px]"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none min-h-[150px]"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">回答内容 (Answer Content)</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">回答内容 (Answer Content)</label>
                         <textarea
                             value={aContent}
                             onChange={(e) => setAContent(e.target.value)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none min-h-[200px]"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none min-h-[200px]"
                             required
                         />
                     </div>
@@ -168,23 +168,23 @@ export default function QaDetail() {
                             id="publish"
                             checked={isPublished}
                             onChange={(e) => setIsPublished(e.target.checked)}
-                            className="w-5 h-5 rounded border-gray-300 text-[#2563eb] focus:ring-[#2563eb]"
+                            className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
                         />
-                        <label htmlFor="publish" className="text-[#111111] font-medium cursor-pointer">
+                        <label htmlFor="publish" className="text-foreground font-medium cursor-pointer">
                             公開する (Published)
                         </label>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">表示順序</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">表示順序</label>
                         <input
                             type="number"
                             value={sortOrder}
                             onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none"
                             min="0"
                         />
-                        <p className="text-xs text-[#444444] mt-1">数値が小さいほど上位に表示されます</p>
+                        <p className="text-xs text-foreground-muted mt-1">数値が小さいほど上位に表示されます</p>
                     </div>
 
                     <div className="flex items-center gap-3 bg-gray-100 p-4 rounded-lg border border-gray-300">
@@ -193,9 +193,9 @@ export default function QaDetail() {
                             id="isFree"
                             checked={isFree}
                             onChange={(e) => setIsFree(e.target.checked)}
-                            className="w-5 h-5 rounded border-gray-300 text-[#2563eb] focus:ring-[#2563eb]"
+                            className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
                         />
-                        <label htmlFor="isFree" className="text-[#111111] font-medium cursor-pointer">
+                        <label htmlFor="isFree" className="text-foreground font-medium cursor-pointer">
                             🆓 無料公開 (Free Access)
                         </label>
                     </div>
@@ -210,7 +210,7 @@ export default function QaDetail() {
                         </button>
                         <button
                             type="submit"
-                            className="px-8 py-3 bg-[#2563eb] hover:bg-[#1e40af] text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
+                            className="px-8 py-3 bg-primary hover:bg-primary-hover text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
                         >
                             変更を保存する
                         </button>
@@ -224,16 +224,16 @@ export default function QaDetail() {
                     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
                         <div className="bg-white border border-[#2563eb]/30 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2563eb] to-blue-500"></div>
-                            <div className="w-16 h-16 bg-[#2563eb]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#2563eb]">
+                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-[#111111] mb-2">更新完了！</h3>
-                            <p className="text-[#444444] mb-6">
+                            <h3 className="text-2xl font-bold text-foreground mb-2">更新完了！</h3>
+                            <p className="text-foreground-muted mb-6">
                                 Q&Aの内容が正常に更新されました。
                             </p>
                             <button
                                 onClick={() => setShowSuccess(false)}
-                                className="px-6 py-2 bg-[#2563eb] hover:bg-[#1e40af] text-white rounded-full font-medium transition w-full"
+                                className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-full font-medium transition w-full"
                             >
                                 閉じる
                             </button>

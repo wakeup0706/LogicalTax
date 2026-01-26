@@ -91,7 +91,7 @@ function LoginForm() {
             <div className="absolute top-6 left-6 z-20">
                 <Link
                     href="/"
-                    className="flex items-center gap-2 text-[#444444] hover:text-[#111111] transition-colors group"
+                    className="flex items-center gap-2 text-foreground-muted hover:text-foreground transition-colors group"
                 >
                     <ArrowLeftIcon />
                     <span className="text-sm font-medium">ホームに戻る</span>
@@ -102,23 +102,23 @@ function LoginForm() {
                 {/* Decorative Element */}
                 <div className="flex justify-center mb-8">
                     <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#2563eb] to-[#1e40af] rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-hover rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-[#2563eb] to-[#1e40af] rounded-2xl blur opacity-30"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary-hover rounded-2xl blur opacity-30"></div>
                     </div>
                 </div>
 
-                <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div className="bg-surface/80 backdrop-blur-xl border border-border p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     {/* Card glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-purple-50/50 pointer-events-none"></div>
 
                     <div className="relative">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-[#111111] mb-3">おかえりなさい</h1>
-                            <p className="text-[#444444]">LogicalTaxアカウントにログイン</p>
+                            <h1 className="text-3xl font-bold text-foreground mb-3">おかえりなさい</h1>
+                            <p className="text-foreground-muted">LogicalTaxアカウントにログイン</p>
                         </div>
 
                         {redirectTo === '/checkout' && (
@@ -141,7 +141,7 @@ function LoginForm() {
                             )}
 
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-2">メールアドレス</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-2">メールアドレス</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <MailIcon />
@@ -152,7 +152,7 @@ function LoginForm() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-4 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                        className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-4 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                         placeholder="you@example.com"
                                     />
                                 </div>
@@ -160,8 +160,8 @@ function LoginForm() {
 
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-sm font-medium text-[#444444]">パスワード</label>
-                                    <button type="button" className="text-xs text-[#2563eb] hover:text-[#1e40af] transition-colors">
+                                    <label className="block text-sm font-medium text-foreground-muted">パスワード</label>
+                                    <button type="button" className="text-xs text-primary hover:text-primary-hover transition-colors">
                                         パスワードを忘れた？
                                     </button>
                                 </div>
@@ -175,13 +175,13 @@ function LoginForm() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-12 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                        className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-12 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                         placeholder="••••••••"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#111111] transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-foreground transition-colors"
                                     >
                                         {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                     </button>
@@ -189,9 +189,10 @@ function LoginForm() {
                             </div>
 
                             <button
+                                suppressHydrationWarning
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#1e40af] hover:from-[#1e40af] hover:to-[#1e3a8a] text-white font-semibold shadow-lg shadow-indigo-500/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                className="w-full py-3.5 bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-indigo-900 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px] relative overflow-hidden hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -205,10 +206,10 @@ function LoginForm() {
                             </button>
                         </form>
 
-                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                            <p className="text-[#444444]">
+                        <div className="mt-8 pt-6 border-t border-border text-center">
+                            <p className="text-foreground-muted">
                                 アカウントをお持ちでないですか？{' '}
-                                <Link href="/register" className="text-[#2563eb] hover:text-[#1e40af] font-semibold transition-colors">
+                                <Link href="/register" className="text-primary hover:text-primary-hover font-semibold transition-colors">
                                     新規登録
                                 </Link>
                             </p>
@@ -224,7 +225,7 @@ export default function LoginPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2563eb]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
         }>
             <LoginForm />

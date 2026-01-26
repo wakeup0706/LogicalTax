@@ -84,80 +84,80 @@ export default function CategoryDetail() {
         }
     };
 
-    if (loading) return <div className="p-8 text-[#444444]">読み込み中...</div>;
+    if (loading) return <div className="p-8 text-foreground-muted">読み込み中...</div>;
 
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/categories" className="text-[#444444] hover:text-[#111111] transition">
+                <Link href="/admin/categories" className="text-foreground-muted hover:text-foreground transition">
                     ← 戻る
                 </Link>
-                <h1 className="text-3xl font-bold text-[#111111]">カテゴリー詳細編集</h1>
+                <h1 className="text-3xl font-bold text-foreground">カテゴリー詳細編集</h1>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-surface p-8 rounded-xl border border-border shadow-sm">
                 <form onSubmit={handleUpdate} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">ID</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">ID</label>
                         <input
                             type="text"
                             value={category?.id || ''}
                             disabled
-                            className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-[#444444] cursor-not-allowed font-mono text-sm"
+                            className="w-full bg-surface-muted/50 border border-border rounded px-3 py-2 text-foreground-muted cursor-not-allowed font-mono text-sm"
                         />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-[#444444] mb-1">カテゴリー名</label>
+                            <label className="block text-sm font-medium text-foreground-muted mb-1">カテゴリー名</label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
+                                className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none transition"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-[#444444] mb-1">スラッグ (Slug)</label>
+                            <label className="block text-sm font-medium text-foreground-muted mb-1">スラッグ (Slug)</label>
                             <input
                                 type="text"
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
+                                className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none transition"
                                 required
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">表示順序</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">表示順序</label>
                         <input
                             type="number"
                             value={sortOrder}
                             onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none transition"
                             min="0"
                         />
-                        <p className="text-xs text-[#444444] mt-1">
+                        <p className="text-xs text-foreground-muted mt-1">
                             数値が小さいほど上位に表示されます（0 = 最優先）
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[#444444] mb-1">説明 (Detailed Explanation)</label>
+                        <label className="block text-sm font-medium text-foreground-muted mb-1">説明 (Detailed Explanation)</label>
                         <textarea
                             value={desc}
                             onChange={(e) => setDesc(e.target.value)}
-                            className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none transition h-64"
+                            className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground focus:ring-2 focus:ring-primary outline-none transition h-64"
                             placeholder="カテゴリーの詳細な説明をここに記述してください..."
                         />
-                        <p className="text-xs text-[#444444] mt-1">
+                        <p className="text-xs text-foreground-muted mt-1">
                             ユーザーに表示されるカテゴリーの詳細な説明文です。詳しく記述することができます。
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <div className="flex items-center justify-between pt-6 border-t border-border">
                         <button
                             type="button"
                             onClick={handleDelete}
@@ -168,7 +168,7 @@ export default function CategoryDetail() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="px-8 py-3 bg-[#2563eb] hover:bg-[#1e40af] disabled:bg-[#2563eb]/70 disabled:cursor-not-allowed text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
+                            className="px-8 py-3 bg-primary hover:bg-primary-hover disabled:bg-primary/70 disabled:cursor-not-allowed text-white rounded font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px]"
                         >
                             {saving ? '保存中...' : '変更を保存する'}
                         </button>

@@ -135,10 +135,10 @@ export default function AdminUsers() {
                 {/* Left Panel - Title + Form (Sticky) */}
                 <div className="xl:col-span-1 h-fit xl:sticky xl:top-4 space-y-4">
                     {/* Title */}
-                    <h1 className="text-3xl font-bold text-[#111111]">ユーザー管理</h1>
+                    <h1 className="text-3xl font-bold text-foreground">ユーザー管理</h1>
 
                     {/* Create User Form */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="bg-surface p-6 rounded-xl border border-border shadow-sm">
                         <h2 className="text-xl font-semibold mb-4 text-purple-600">新規ユーザー作成</h2>
                         <form onSubmit={handleCreate} className="space-y-4">
                             {msg && (
@@ -148,31 +148,31 @@ export default function AdminUsers() {
                             )}
 
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">メールアドレス</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">メールアドレス</label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground"
                                     required
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">氏名</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">氏名</label>
                                 <input
                                     type="text"
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">パスワード</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">パスワード</label>
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded px-3 py-2 text-foreground"
                                     required
                                     minLength={6}
                                 />
@@ -189,9 +189,9 @@ export default function AdminUsers() {
                 </div>
 
                 <div className="xl:col-span-2">
-                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                    <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-gray-50 text-[#444444]">
+                            <thead className="bg-surface-muted text-foreground-muted">
                                 <tr>
                                     <th className="p-4">ユーザー (Email / Name)</th>
                                     <th className="p-4">権限</th>
@@ -199,19 +199,19 @@ export default function AdminUsers() {
                                     <th className="p-4 text-right">操作</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200">
+                            <tbody className="divide-y divide-border">
                                 {users.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="p-8 text-center text-[#444444]">
+                                        <td colSpan={4} className="p-8 text-center text-foreground-muted">
                                             ユーザーが見つかりません。
                                         </td>
                                     </tr>
                                 ) : (
                                     users.map((user) => (
-                                        <tr key={user.id} className="hover:bg-gray-50 transition">
+                                        <tr key={user.id} className="hover:bg-surface-muted transition">
                                             <td className="p-4">
-                                                <div className="font-bold text-[#111111]">{user.email || 'No Email'}</div>
-                                                <div className="text-sm text-[#444444]">{user.full_name}</div>
+                                                <div className="font-bold text-foreground">{user.email || 'No Email'}</div>
+                                                <div className="text-sm text-foreground-muted">{user.full_name}</div>
                                                 <div className="text-xs text-gray-400 font-mono mt-1">{user.id}</div>
                                             </td>
                                             <td className="p-4">
@@ -220,18 +220,18 @@ export default function AdminUsers() {
                                                         ADMIN
                                                     </span>
                                                 ) : (
-                                                    <span className="px-2 py-1 rounded text-xs font-bold bg-gray-50 text-gray-500 border border-gray-200">
+                                                    <span className="px-2 py-1 rounded text-xs font-bold bg-surface-muted text-gray-500 border border-border">
                                                         USER
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="p-4 text-sm text-[#444444]">
+                                            <td className="p-4 text-sm text-foreground-muted">
                                                 {new Date(user.created_at).toLocaleDateString()}
                                             </td>
                                             <td className="p-4 text-right">
                                                 <button
                                                     onClick={() => openEditModal(user)}
-                                                    className="text-[#2563eb] hover:text-[#1e40af] text-sm font-medium hover:underline mr-4"
+                                                    className="text-primary hover:text-primary-hover text-sm font-medium hover:underline mr-4"
                                                 >
                                                     編集
                                                 </button>
@@ -254,12 +254,12 @@ export default function AdminUsers() {
             {/* Edit User Modal */}
             {editingUser && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+                    <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold text-[#111111]">ユーザー編集</h2>
+                            <h2 className="text-xl font-bold text-foreground">ユーザー編集</h2>
                             <button
                                 onClick={closeEditModal}
-                                className="text-gray-400 hover:text-[#111111] transition"
+                                className="text-gray-400 hover:text-foreground transition"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -269,37 +269,37 @@ export default function AdminUsers() {
 
                         <form onSubmit={handleEditSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">メールアドレス</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">メールアドレス</label>
                                 <input
                                     type="email"
                                     value={editEmail}
                                     onChange={(e) => setEditEmail(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] focus:border-transparent"
+                                    className="w-full bg-surface-muted border border-border rounded-lg px-3 py-2 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">氏名</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">氏名</label>
                                 <input
                                     type="text"
                                     value={editFullName}
                                     onChange={(e) => setEditFullName(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] focus:border-transparent"
+                                    className="w-full bg-surface-muted border border-border rounded-lg px-3 py-2 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">新しいパスワード</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">新しいパスワード</label>
                                 <input
                                     type="password"
                                     value={editPassword}
                                     onChange={(e) => setEditPassword(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-[#111111] focus:ring-2 focus:ring-[#2563eb] focus:border-transparent"
+                                    className="w-full bg-surface-muted border border-border rounded-lg px-3 py-2 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
                                     placeholder="変更する場合のみ入力"
                                     minLength={6}
                                 />
-                                <p className="text-xs text-[#444444] mt-1">空欄の場合、パスワードは変更されません</p>
+                                <p className="text-xs text-foreground-muted mt-1">空欄の場合、パスワードは変更されません</p>
                             </div>
 
                             <div className="flex items-center gap-3">
@@ -310,23 +310,23 @@ export default function AdminUsers() {
                                         onChange={(e) => setEditIsAdmin(e.target.checked)}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#2563eb] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
                                 </label>
-                                <span className="text-sm font-medium text-[#444444]">管理者権限</span>
+                                <span className="text-sm font-medium text-foreground-muted">管理者権限</span>
                             </div>
 
                             <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={closeEditModal}
-                                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-[#111111] rounded-lg font-medium transition"
+                                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-foreground rounded-lg font-medium transition"
                                 >
                                     キャンセル
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={editLoading}
-                                    className="flex-1 py-2 bg-[#2563eb] hover:bg-[#1e40af] text-white rounded-lg font-medium transition disabled:opacity-50"
+                                    className="flex-1 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition disabled:opacity-50"
                                 >
                                     {editLoading ? '保存中...' : '保存'}
                                 </button>

@@ -185,7 +185,7 @@ export default function AdminQA() {
         <>
             {/* Legend - Top Right */}
             <div className="flex justify-end mb-4">
-                <div className="flex items-center gap-2 text-sm text-[#444444]">
+                <div className="flex items-center gap-2 text-sm text-foreground-muted">
                     <span className="flex items-center gap-1">
                         <span className="text-emerald-600">⭕</span> 公開中
                     </span>
@@ -200,21 +200,21 @@ export default function AdminQA() {
                 {/* Left Panel - Title + Form (Sticky) */}
                 <div className="xl:col-span-1 h-fit xl:sticky xl:top-4 space-y-4">
                     {/* Title */}
-                    <h1 className="text-3xl font-bold text-[#111111]">Q&A 管理</h1>
+                    <h1 className="text-3xl font-bold text-foreground">Q&A 管理</h1>
 
                     {/* Create Form */}
-                    <div className="p-6 rounded-2xl border border-gray-200 bg-white shadow-sm">
-                        <h2 className="text-xl font-semibold mb-4 text-[#2563eb] flex items-center gap-2">
+                    <div className="p-6 rounded-2xl border border-border bg-surface shadow-sm">
+                        <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
                             <span className="text-2xl">📝</span>
                             新規 Q&A 追加
                         </h2>
                         <form onSubmit={handleCreate} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">カテゴリー</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">カテゴリー</label>
                                 <select
                                     value={categoryId}
                                     onChange={(e) => setCategoryId(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-[#111111] focus:ring-2 focus:ring-[#2563eb] outline-none"
+                                    className="w-full bg-surface-muted border border-border rounded-xl px-3 py-2.5 text-foreground focus:ring-2 focus:ring-primary outline-none"
                                     required
                                 >
                                     <option value="">カテゴリーを選択</option>
@@ -224,33 +224,33 @@ export default function AdminQA() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">タイトル (要約)</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">タイトル (要約)</label>
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded-xl px-3 py-2.5 text-foreground"
                                     required
                                     placeholder="質問の短い要約..."
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">質問詳細</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">質問詳細</label>
                                 <textarea
                                     value={qContent}
                                     onChange={(e) => setQContent(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded-xl px-3 py-2.5 text-foreground"
                                     rows={3}
                                     required
                                     placeholder="質問の詳細..."
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">回答内容</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">回答内容</label>
                                 <textarea
                                     value={aContent}
                                     onChange={(e) => setAContent(e.target.value)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded-xl px-3 py-2.5 text-foreground"
                                     rows={4}
                                     required
                                     placeholder="専門家の回答..."
@@ -258,16 +258,16 @@ export default function AdminQA() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[#444444] mb-1">表示順序</label>
+                                <label className="block text-sm font-medium text-foreground-muted mb-1">表示順序</label>
                                 <input
                                     type="number"
                                     value={sortOrder}
                                     onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                                    className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-[#111111]"
+                                    className="w-full bg-surface-muted border border-border rounded-xl px-3 py-2.5 text-foreground"
                                     min="0"
                                     placeholder="0 = 最優先"
                                 />
-                                <p className="text-xs text-[#444444] mt-1">数値が小さいほど上位に表示されます</p>
+                                <p className="text-xs text-foreground-muted mt-1">数値が小さいほど上位に表示されます</p>
                             </div>
 
                             <div className="flex items-center gap-2 bg-gray-100 p-3 rounded-xl border border-gray-300">
@@ -276,16 +276,16 @@ export default function AdminQA() {
                                     id="isFree"
                                     checked={isFree}
                                     onChange={(e) => setIsFree(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-300 text-[#2563eb] focus:ring-[#2563eb]"
+                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
                                 />
-                                <label htmlFor="isFree" className="text-sm text-[#444444] cursor-pointer select-none">
+                                <label htmlFor="isFree" className="text-sm text-foreground-muted cursor-pointer select-none">
                                     🆓 無料公開 (Free Access)
                                 </label>
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full py-3 bg-gradient-to-r from-[#2563eb] to-[#1e40af] hover:from-[#1e40af] hover:to-[#1e3a8a] text-white rounded-xl font-medium transition shadow-lg shadow-indigo-500/20"
+                                className="w-full py-3 bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-indigo-900 text-white rounded-xl font-medium transition shadow-lg shadow-indigo-500/20"
                             >
                                 Q&Aを公開
                             </button>
@@ -296,14 +296,14 @@ export default function AdminQA() {
                 {/* List */}
                 <div className="xl:col-span-2">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-semibold text-[#111111]">Q&A 一覧 ({qaItems.length}件)</h2>
+                        <h2 className="text-xl font-semibold text-foreground">Q&A 一覧 ({qaItems.length}件)</h2>
                         {reordering && (
-                            <span className="text-sm text-[#2563eb] animate-pulse">並び替え中...</span>
+                            <span className="text-sm text-primary animate-pulse">並び替え中...</span>
                         )}
                     </div>
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
-                            <div className="animate-spin h-8 w-8 border-4 border-[#2563eb] border-t-transparent rounded-full"></div>
+                            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
                         </div>
                     ) : (
                         <div className="space-y-3">
@@ -313,22 +313,22 @@ export default function AdminQA() {
                                     : 'border-red-200 hover:border-red-300 opacity-75'
                                     }`}>
                                     {/* Order Controls */}
-                                    <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center justify-center gap-1 bg-gray-50 rounded-l-xl border-r border-gray-200">
+                                    <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center justify-center gap-1 bg-surface-muted rounded-l-xl border-r border-border">
                                         <button
                                             onClick={() => moveItem(qa.id, 'up')}
                                             disabled={index === 0 || reordering}
-                                            className="p-1.5 text-gray-400 hover:text-[#111111] hover:bg-gray-200 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                            className="p-1.5 text-gray-400 hover:text-foreground hover:bg-gray-200 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
                                             title="上に移動"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
                                             </svg>
                                         </button>
-                                        <span className="text-xs font-mono text-[#444444] w-6 text-center">{index + 1}</span>
+                                        <span className="text-xs font-mono text-foreground-muted w-6 text-center">{index + 1}</span>
                                         <button
                                             onClick={() => moveItem(qa.id, 'down')}
                                             disabled={index === qaItems.length - 1 || reordering}
-                                            className="p-1.5 text-gray-400 hover:text-[#111111] hover:bg-gray-200 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                            className="p-1.5 text-gray-400 hover:text-foreground hover:bg-gray-200 rounded disabled:opacity-30 disabled:cursor-not-allowed transition"
                                             title="下に移動"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,7 +340,7 @@ export default function AdminQA() {
                                     <div className="ml-12 pl-4">
                                         {/* Top bar */}
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className="text-xs font-bold px-2 py-1 rounded-lg bg-indigo-50 text-[#2563eb] uppercase tracking-wider">
+                                            <span className="text-xs font-bold px-2 py-1 rounded-lg bg-indigo-50 text-primary uppercase tracking-wider">
                                                 {getCategoryName(qa.category_id)}
                                             </span>
                                             {qa.is_free && (
@@ -365,7 +365,7 @@ export default function AdminQA() {
                                             <div className="ml-auto flex gap-2">
                                                 <Link
                                                     href={`/admin/qa/${qa.id}`}
-                                                    className="text-[#2563eb] hover:text-[#1e40af] text-sm font-medium px-3 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition"
+                                                    className="text-primary hover:text-primary-hover text-sm font-medium px-3 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition"
                                                 >
                                                     編集
                                                 </Link>
@@ -380,10 +380,10 @@ export default function AdminQA() {
 
                                         {/* Content */}
                                         <Link href={`/admin/qa/${qa.id}`} className="block group/link">
-                                            <h3 className="text-lg font-bold text-[#111111] group-hover/link:text-[#2563eb] transition mb-1">
+                                            <h3 className="text-lg font-bold text-foreground group-hover/link:text-primary transition mb-1">
                                                 {qa.question_title}
                                             </h3>
-                                            <p className="text-sm text-[#444444] line-clamp-2">{qa.question_content}</p>
+                                            <p className="text-sm text-foreground-muted line-clamp-2">{qa.question_content}</p>
                                         </Link>
                                     </div>
                                 </div>
@@ -391,7 +391,7 @@ export default function AdminQA() {
                             {qaItems.length === 0 && (
                                 <div className="p-12 text-center border-2 border-dashed border-gray-200 rounded-2xl">
                                     <div className="text-5xl mb-4">📭</div>
-                                    <p className="text-[#444444] italic">Q&Aがまだありません。</p>
+                                    <p className="text-foreground-muted italic">Q&Aがまだありません。</p>
                                     <p className="text-gray-400 text-sm mt-2">左のフォームから最初のQ&Aを作成しましょう</p>
                                 </div>
                             )}
@@ -432,16 +432,16 @@ export default function AdminQA() {
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
                     <div className="bg-white border border-[#2563eb]/30 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2563eb] to-emerald-500"></div>
-                        <div className="w-16 h-16 bg-[#2563eb]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#2563eb]">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <h3 className="text-2xl font-bold text-[#111111] mb-2">公開完了！</h3>
-                        <p className="text-[#444444] mb-6">
+                        <h3 className="text-2xl font-bold text-foreground mb-2">公開完了！</h3>
+                        <p className="text-foreground-muted mb-6">
                             新しいQ&Aが公開されました。
                         </p>
                         <button
                             onClick={() => setShowSuccess(false)}
-                            className="px-6 py-2 bg-[#2563eb] hover:bg-[#1e40af] text-white rounded-full font-medium transition w-full"
+                            className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-full font-medium transition w-full"
                         >
                             閉じる
                         </button>

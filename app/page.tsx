@@ -21,22 +21,22 @@ export default async function HomePage() {
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
+      <header className="fixed top-0 w-full z-50 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
-          <h1 className="text-lg font-semibold tracking-tight text-[#111111]">
-            LogicalTax <span className="text-[#444444] font-normal">Q&A</span>
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">
+            LogicalTax <span className="text-foreground-muted font-normal">Q&A</span>
           </h1>
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-[#444444] hover:text-[#111111] transition-colors"
+              className="text-sm font-medium text-foreground-muted hover:text-foreground transition-colors"
             >
               ログイン
             </Link>
             {process.env.NEXT_PUBLIC_ENABLE_REGISTRATION !== 'false' && (
               <Link
                 href="/register"
-                className="text-sm font-medium px-4 py-2 rounded-full bg-[#2563eb] hover:bg-[#1e40af] !text-white transition-colors"
+                className="text-sm font-medium px-4 py-2 rounded-full bg-primary hover:bg-primary-hover !text-white transition-colors"
               >
                 新規登録
               </Link>
@@ -48,17 +48,17 @@ export default async function HomePage() {
       <main className="relative z-10 pt-32 pb-20">
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto px-4 text-center mb-32">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-300 bg-white text-xs text-[#444444] mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface text-xs text-foreground-muted mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             専門家による信頼できる回答
           </div>
 
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 tracking-tight leading-[1.1] text-[#111111]">
+          <h2 className="text-5xl md:text-6xl font-bold mb-8 tracking-tight leading-[1.1] text-foreground">
             税務判断をサポートする<br />
-            <span className="text-[#444444]">究極のQ&Aプラットフォーム</span>
+            <span className="text-foreground-muted">究極のQ&Aプラットフォーム</span>
           </h2>
 
-          <p className="text-xl text-[#444444] mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-foreground-muted mb-10 max-w-2xl mx-auto leading-relaxed">
             専門家による詳細な回答で、税務の疑問を即座に解決。<br className="hidden md:block" />
             月額¥10,000で無制限アクセス。
           </p>
@@ -67,14 +67,14 @@ export default async function HomePage() {
             {process.env.NEXT_PUBLIC_ENABLE_REGISTRATION !== 'false' && (
               <Link
                 href="/register"
-                className="px-8 py-4 rounded-full bg-[#2563eb] !text-white text-lg font-medium hover:bg-[#1e40af] transition-colors shadow-lg shadow-indigo-500/20"
+                className="px-8 py-4 rounded-full bg-primary !text-white text-lg font-medium hover:bg-primary-hover transition-colors shadow-lg shadow-indigo-500/20"
               >
                 今すぐ登録する
               </Link>
             )}
             <Link
               href="/login"
-              className="px-8 py-4 rounded-full border border-gray-300 text-[#444444] text-lg font-medium hover:border-gray-400 hover:text-[#111111] transition-colors"
+              className="px-8 py-4 rounded-full border border-border text-foreground-muted text-lg font-medium hover:border-gray-400 hover:text-foreground transition-colors"
             >
               ログイン
             </Link>
@@ -83,11 +83,11 @@ export default async function HomePage() {
 
         {/* Preview Q&A Section */}
         <div className="max-w-3xl mx-auto px-4">
-          <div className="flex justify-between items-end mb-12 border-b border-gray-200 pb-4">
-            <h3 className="text-2xl font-semibold tracking-tight text-[#111111]">最新の質問</h3>
+          <div className="flex justify-between items-end mb-12 border-b border-border pb-4">
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">最新の質問</h3>
             <Link
               href="/login"
-              className="text-[#2563eb] hover:text-[#1e40af] text-sm font-medium flex items-center gap-1 group"
+              className="text-primary hover:text-primary-hover text-sm font-medium flex items-center gap-1 group"
             >
               全ての質問を見る
               <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,19 +100,19 @@ export default async function HomePage() {
             {qaList?.map((item: any) => (
               <div
                 key={item.id}
-                className="group p-6 rounded-2xl bg-white border border-gray-300 hover:border-gray-400 hover:shadow-md transition-all duration-300"
+                className="group p-6 rounded-2xl bg-surface border border-border hover:border-gray-400 hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-gray-100 text-[#444444] border border-gray-200">
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-surface-muted text-foreground-muted border border-border">
                     {item.categories?.name}
                   </span>
                 </div>
 
-                <h4 className="text-lg font-semibold text-[#111111] mb-3 group-hover:text-[#2563eb] transition-colors">
+                <h4 className="text-lg font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
                   {item.question_title}
                 </h4>
 
-                <div className="prose prose-sm max-w-none text-[#444444]">
+                <div className="prose prose-sm max-w-none text-foreground-muted">
                   <p className="leading-relaxed whitespace-pre-wrap">
                     {item.answer_content}
                   </p>
@@ -124,16 +124,16 @@ export default async function HomePage() {
 
         {/* CTA Section */}
         <div className="max-w-4xl mx-auto px-4 mt-32">
-          <div className="rounded-3xl border border-gray-300 bg-white p-12 text-center relative overflow-hidden shadow-lg">
+          <div className="rounded-3xl border border-border bg-surface p-12 text-center relative overflow-hidden shadow-lg">
             <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
 
-            <h3 className="text-3xl font-bold mb-4 relative z-10 text-[#111111]">今すぐ始めましょう</h3>
-            <p className="text-lg text-[#444444] mb-8 relative z-10">
+            <h3 className="text-3xl font-bold mb-4 relative z-10 text-foreground">今すぐ始めましょう</h3>
+            <p className="text-lg text-foreground-muted mb-8 relative z-10">
               月額¥10,000で全てのQ&Aに無制限アクセス
             </p>
             <Link
               href="/login"
-              className="relative z-10 inline-block px-8 py-3 rounded-full bg-[#2563eb] !text-white font-medium hover:bg-[#1e40af] transition-colors"
+              className="relative z-10 inline-block px-8 py-3 rounded-full bg-primary !text-white font-medium hover:bg-primary-hover transition-colors"
             >
               アカウントを作成
             </Link>

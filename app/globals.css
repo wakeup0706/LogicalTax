@@ -6,6 +6,15 @@
   --foreground-muted: #444444;
   --link: #2563eb;
   --link-hover: #1e40af;
+
+  /* Semantic Colors */
+  --primary: #2563eb;
+  --primary-hover: #1e40af;
+  --surface: #ffffff;
+  --surface-muted: #f3f4f6;
+  /* gray-100 */
+  --border: #d1d5db;
+  /* gray-300 */
 }
 
 @theme inline {
@@ -14,6 +23,13 @@
   --color-foreground-muted: var(--foreground-muted);
   --color-link: var(--link);
   --color-link-hover: var(--link-hover);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

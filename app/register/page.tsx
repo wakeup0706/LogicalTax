@@ -115,7 +115,7 @@ export default function RegisterPage() {
             <div className="absolute top-6 left-6 z-20">
                 <Link
                     href="/"
-                    className="flex items-center gap-2 text-[#444444] hover:text-[#111111] transition-colors group"
+                    className="flex items-center gap-2 text-foreground-muted hover:text-foreground transition-colors group"
                 >
                     <ArrowLeftIcon />
                     <span className="text-sm font-medium">ホームに戻る</span>
@@ -126,23 +126,23 @@ export default function RegisterPage() {
                 {/* Decorative Element */}
                 <div className="flex justify-center mb-8">
                     <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#2563eb] to-[#1e40af] rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-hover rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
                         </div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-[#2563eb] to-[#1e40af] rounded-2xl blur opacity-30"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary-hover rounded-2xl blur opacity-30"></div>
                     </div>
                 </div>
 
-                <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div className="bg-surface/80 backdrop-blur-xl border border-border p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     {/* Card glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-purple-50/50 pointer-events-none"></div>
 
                     <div className="relative">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-[#111111] mb-3">アカウント作成</h1>
-                            <p className="text-[#444444]">LogicalTaxを始めましょう</p>
+                            <h1 className="text-3xl font-bold text-foreground mb-3">アカウント作成</h1>
+                            <p className="text-foreground-muted">LogicalTaxを始めましょう</p>
                         </div>
 
                         {success ? (
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                                 )}
 
                                 <div>
-                                    <label className="block text-sm font-medium text-[#444444] mb-2">お名前（任意）</label>
+                                    <label className="block text-sm font-medium text-foreground-muted mb-2">お名前（任意）</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                             <UserIcon />
@@ -178,14 +178,14 @@ export default function RegisterPage() {
                                             type="text"
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
-                                            className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-4 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                            className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-4 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                             placeholder="山田 太郎"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-[#444444] mb-2">メールアドレス</label>
+                                    <label className="block text-sm font-medium text-foreground-muted mb-2">メールアドレス</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                             <MailIcon />
@@ -195,14 +195,14 @@ export default function RegisterPage() {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
-                                            className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-4 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                            className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-4 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                             placeholder="you@example.com"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-[#444444] mb-2">パスワード</label>
+                                    <label className="block text-sm font-medium text-foreground-muted mb-2">パスワード</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                             <LockIcon />
@@ -212,22 +212,22 @@ export default function RegisterPage() {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
-                                            className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-12 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                            className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-12 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                             placeholder="••••••••"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#111111] transition-colors"
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-foreground transition-colors"
                                         >
                                             {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                         </button>
                                     </div>
-                                    <p className="mt-1.5 text-xs text-[#444444]">6文字以上で設定してください</p>
+                                    <p className="mt-1.5 text-xs text-foreground-muted">6文字以上で設定してください</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-[#444444] mb-2">パスワード（確認）</label>
+                                    <label className="block text-sm font-medium text-foreground-muted mb-2">パスワード（確認）</label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                             <LockIcon />
@@ -237,13 +237,13 @@ export default function RegisterPage() {
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             required
-                                            className="w-full bg-gray-100 border border-gray-300 rounded-xl pl-12 pr-12 py-3.5 text-[#111111] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all"
+                                            className="w-full bg-surface-muted border border-border rounded-xl pl-12 pr-12 py-3.5 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                             placeholder="••••••••"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#111111] transition-colors"
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-foreground transition-colors"
                                         >
                                             {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
                                         </button>
@@ -253,7 +253,7 @@ export default function RegisterPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#1e40af] hover:from-[#1e40af] hover:to-[#1e3a8a] text-white font-semibold shadow-lg shadow-indigo-500/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 mt-2"
+                                    className="w-full py-3.5 bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-indigo-900 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition transform hover:translate-y-[-1px] relative overflow-hidden hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 mt-2"
                                 >
                                     {loading ? (
                                         <span className="flex items-center justify-center gap-2">
@@ -268,10 +268,10 @@ export default function RegisterPage() {
                             </form>
                         )}
 
-                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                            <p className="text-[#444444]">
+                        <div className="mt-8 pt-6 border-t border-border text-center">
+                            <p className="text-foreground-muted">
                                 すでにアカウントをお持ちですか？{' '}
-                                <Link href="/login" className="text-[#2563eb] hover:text-[#1e40af] font-semibold transition-colors">
+                                <Link href="/login" className="text-primary hover:text-primary-hover font-semibold transition-colors">
                                     ログイン
                                 </Link>
                             </p>

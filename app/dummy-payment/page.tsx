@@ -25,13 +25,13 @@ export default function DummyPaymentPage() {
     }, [router]);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-            <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+        <div className="min-h-screen bg-surface-muted flex flex-col items-center justify-center p-4">
+            <div className="bg-surface p-8 rounded-xl shadow-lg max-w-md w-full text-center">
                 {status === 'processing' ? (
                     <>
                         <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                        <h1 className="text-xl font-bold text-gray-900 mb-2">決済処理中...</h1>
-                        <p className="text-gray-500">
+                        <h1 className="text-xl font-bold text-foreground mb-2">決済処理中...</h1>
+                        <p className="text-foreground-muted">
                             安全な決済ゲートウェイに接続しています。<br />
                             画面を閉じずにお待ちください。
                         </p>
@@ -43,14 +43,14 @@ export default function DummyPaymentPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <h1 className="text-xl font-bold text-gray-900 mb-2">決済が完了しました</h1>
-                        <p className="text-gray-500">
+                        <h1 className="text-xl font-bold text-foreground mb-2">決済が完了しました</h1>
+                        <p className="text-foreground-muted">
                             LogicalTaxに戻ります...
                         </p>
                     </>
                 )}
             </div>
-            <p className="mt-8 text-sm text-gray-400">
+            <p className="mt-8 text-sm text-foreground-muted">
                 Mock Payment Gateway &copy; 2024
             </p>
         </div>

@@ -134,14 +134,14 @@ export default function QAListClient({ initialQAList, categories, currentCategor
             {/* Title & Search Bar */}
             <div className="mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-3 text-[#111111]">
+                    <h2 className="text-2xl font-bold flex items-center gap-3 text-foreground">
                         <span className="text-3xl">
                             {currentCategory
                                 ? categories.find(c => c.id === currentCategory)?.name
                                 : '最新の質問'}
                         </span>
                         {qaList.length > 0 && (
-                            <span className="text-sm font-normal text-[#444444] bg-gray-100 px-3 py-1 rounded-full">
+                            <span className="text-sm font-normal text-foreground-muted bg-surface-muted px-3 py-1 rounded-full">
                                 {qaList.length}件
                             </span>
                         )}
@@ -152,7 +152,7 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                 <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         {isSearching ? (
-                            <svg className="animate-spin h-5 w-5 text-[#2563eb]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -167,7 +167,7 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="質問を検索... (キーワードを入力)"
-                        className="w-full pl-12 pr-4 py-4 bg-white backdrop-blur border-2 border-gray-200 focus:border-[#2563eb] rounded-2xl text-[#111111] placeholder-gray-400 outline-none transition-all focus:ring-4 focus:ring-indigo-100 text-lg"
+                        className="w-full pl-12 pr-4 py-4 bg-surface backdrop-blur border-2 border-gray-200 focus:border-primary rounded-2xl text-foreground placeholder-gray-400 outline-none transition-all focus:ring-4 focus:ring-indigo-100 text-lg"
                     />
                     {searchQuery && (
                         <button
@@ -176,7 +176,7 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                                 setQaList(initialQAList);
                                 setHasSearched(false);
                             }}
-                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#111111] transition"
+                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-foreground transition"
                         >
                             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -186,15 +186,15 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                 </div>
 
                 {hasSearched && (
-                    <p className="text-sm text-[#444444] mt-3 flex items-center gap-2">
-                        <span className="text-[#2563eb]">✓</span>
+                    <p className="text-sm text-foreground-muted mt-3 flex items-center gap-2">
+                        <span className="text-primary">✓</span>
                         「{searchQuery}」で {qaList.length}件の結果
                     </p>
                 )}
 
                 {/* Sort Controls */}
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-[#444444] flex items-center gap-1.5">
+                    <span className="text-sm text-foreground-muted flex items-center gap-1.5">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
                         </svg>
@@ -204,8 +204,8 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         <button
                             onClick={() => setSortOption('default')}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sortOption === 'default'
-                                    ? 'bg-[#2563eb] text-white shadow-lg shadow-indigo-500/20'
-                                    : 'bg-white text-[#444444] hover:bg-gray-50 border border-gray-200'
+                                ? 'bg-primary text-white shadow-lg shadow-indigo-500/20'
+                                : 'bg-surface text-foreground-muted hover:bg-surface-muted border border-border'
                                 }`}
                         >
                             デフォルト
@@ -213,8 +213,8 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         <button
                             onClick={() => setSortOption('title_asc')}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sortOption === 'title_asc'
-                                    ? 'bg-[#2563eb] text-white shadow-lg shadow-indigo-500/20'
-                                    : 'bg-white text-[#444444] hover:bg-gray-50 border border-gray-200'
+                                ? 'bg-primary text-white shadow-lg shadow-indigo-500/20'
+                                : 'bg-surface text-foreground-muted hover:bg-surface-muted border border-border'
                                 }`}
                         >
                             タイトル A→Z
@@ -222,8 +222,8 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         <button
                             onClick={() => setSortOption('title_desc')}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sortOption === 'title_desc'
-                                    ? 'bg-[#2563eb] text-white shadow-lg shadow-indigo-500/20'
-                                    : 'bg-white text-[#444444] hover:bg-gray-50 border border-gray-200'
+                                ? 'bg-primary text-white shadow-lg shadow-indigo-500/20'
+                                : 'bg-surface text-foreground-muted hover:bg-surface-muted border border-border'
                                 }`}
                         >
                             タイトル Z→A
@@ -231,8 +231,8 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         <button
                             onClick={() => setSortOption('category')}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sortOption === 'category'
-                                    ? 'bg-[#2563eb] text-white shadow-lg shadow-indigo-500/20'
-                                    : 'bg-white text-[#444444] hover:bg-gray-50 border border-gray-200'
+                                ? 'bg-primary text-white shadow-lg shadow-indigo-500/20'
+                                : 'bg-surface text-foreground-muted hover:bg-surface-muted border border-border'
                                 }`}
                         >
                             カテゴリー順
@@ -240,8 +240,8 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                         <button
                             onClick={() => setSortOption('free_first')}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sortOption === 'free_first'
-                                    ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20'
-                                    : 'bg-white text-[#444444] hover:bg-gray-50 border border-gray-200'
+                                ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20'
+                                : 'bg-surface text-foreground-muted hover:bg-surface-muted border border-border'
                                 }`}
                         >
                             🆓 無料を先に
@@ -254,7 +254,7 @@ export default function QAListClient({ initialQAList, categories, currentCategor
             <div className="space-y-4">
                 {sortedQaList.map((item, index) => (
                     <Link href={`/qa/${item.id}`} key={item.id} className="block group">
-                        <div className="relative bg-white hover:bg-gray-50 backdrop-blur border-2 border-gray-200 hover:border-[#2563eb]/30 p-6 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-lg">
+                        <div className="relative bg-surface hover:bg-surface-muted backdrop-blur border-2 border-border hover:border-primary/30 p-6 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-lg">
                             {/* Status Indicator - Admin Only */}
                             {isAdmin && (
                                 <div className="absolute -top-2 -right-2 z-10">
@@ -272,14 +272,14 @@ export default function QAListClient({ initialQAList, categories, currentCategor
 
                             {/* Number Badge */}
                             <div className="absolute -left-3 -top-3">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2563eb] to-[#1e40af] flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center text-white font-bold text-sm shadow-lg">
                                     {index + 1}
                                 </div>
                             </div>
 
                             {/* Tags */}
                             <div className="flex flex-wrap items-center gap-2 mb-3 ml-4">
-                                <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-[#2563eb] border border-indigo-200">
+                                <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-primary border border-indigo-200">
                                     {getCategoryName(item)}
                                 </span>
                                 {item.is_free && (
@@ -290,17 +290,17 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                             </div>
 
                             {/* Title */}
-                            <h3 className="text-lg font-bold text-[#111111] mb-2 group-hover:text-[#2563eb] transition-colors leading-relaxed ml-4">
+                            <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-relaxed ml-4">
                                 {hasSearched ? highlightText(item.question_title, searchQuery) : item.question_title}
                             </h3>
 
                             {/* Answer Preview */}
-                            <p className="text-[#444444] line-clamp-2 text-sm leading-relaxed ml-4">
+                            <p className="text-foreground-muted line-clamp-2 text-sm leading-relaxed ml-4">
                                 {hasSearched ? highlightText(item.answer_content.slice(0, 150), searchQuery) : item.answer_content.slice(0, 150)}...
                             </p>
 
                             {/* Arrow indicator */}
-                            <div className="absolute right-6 bottom-6 text-gray-300 group-hover:text-[#2563eb] transition-all group-hover:translate-x-1">
+                            <div className="absolute right-6 bottom-6 text-gray-300 group-hover:text-primary transition-all group-hover:translate-x-1">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                                 </svg>
@@ -310,9 +310,9 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                 ))}
 
                 {qaList.length === 0 && (
-                    <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                    <div className="text-center py-20 bg-surface-muted rounded-2xl border-2 border-dashed border-border">
                         <div className="text-6xl mb-4">🔍</div>
-                        <p className="text-[#444444] text-lg">
+                        <p className="text-foreground-muted text-lg">
                             {hasSearched
                                 ? `「${searchQuery}」に一致する質問が見つかりませんでした`
                                 : 'このカテゴリーにはまだ質問がありません'
@@ -325,7 +325,7 @@ export default function QAListClient({ initialQAList, categories, currentCategor
                                     setQaList(initialQAList);
                                     setHasSearched(false);
                                 }}
-                                className="mt-4 px-6 py-2 bg-[#2563eb] hover:bg-[#1e40af] rounded-xl text-white font-medium transition"
+                                className="mt-4 px-6 py-2 bg-primary hover:bg-primary-hover rounded-xl text-white font-medium transition"
                             >
                                 検索をクリア
                             </button>
