@@ -117,7 +117,7 @@ function LoginForm() {
 
                     <div className="relative">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-foreground mb-3">おかえりなさい</h1>
+                            <h1 className="text-3xl font-bold text-foreground mb-3">おかえり11111なさい</h1>
                             <p className="text-foreground-muted">LogicalTaxアカウントにログイン</p>
                         </div>
 
